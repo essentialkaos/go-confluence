@@ -88,6 +88,52 @@ func (api *API) SetUserAgent(app, version string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// GetDescendants fetch a map of the descendants of a piece of Content
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/descendant-descendants
+func (api *API) GetDescendants(contentID string, params ExpandParameters) (*Contents, error) {
+	result := &Contents{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/descendant",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetDescendantsOfType fetch the direct descendants of a piece of Content, limited to a single descendant type
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/descendant-descendantsOfType
+func (api *API) GetDescendantsOfType(contentID, descType string, params ExpandParameters) (*ContentColletion, error) {
+	result := &ContentColletion{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/descendant/"+descType,
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
 // GetLabels fetch the list of labels on a piece of Content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/label-labels
 func (api *API) GetLabels(contentID string, params LabelParameters) (*LabelCollection, error) {

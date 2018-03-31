@@ -72,6 +72,13 @@ type Content struct {
 	Body        *Body        `json:"body"`
 }
 
+type ContentColletion struct {
+	Results []*Content `json:"results"`
+	Start   int        `json:"start"`
+	Limit   int        `json:"limit"`
+	Size    int        `json:"size"`
+}
+
 type Contents struct {
 	Attachments *ContentColletion `json:"attachment"`
 	Comments    *ContentColletion `json:"comment"`
@@ -89,13 +96,6 @@ type Body struct {
 type View struct {
 	Representation string `json:"representation"`
 	Value          string `json:"value"`
-}
-
-type ContentColletion struct {
-	Results []*Content `json:"results"`
-	Start   int        `json:"start"`
-	Limit   int        `json:"limit"`
-	Size    int        `json:"size"`
 }
 
 type Version struct {
