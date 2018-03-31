@@ -54,6 +54,16 @@ type CollectionParameters struct {
 	Limit  int      `query:"limit"`
 }
 
+// ATTACHMENTS /////////////////////////////////////////////////////////////////////////
+
+type AttachmentParameters struct {
+	Filename  string   `query:"filename"`
+	MediaType string   `query:"mediaType"`
+	Expand    []string `query:"expand"`
+	Start     int      `query:"start"`
+	Limit     int      `query:"limit"`
+}
+
 // CONTENT /////////////////////////////////////////////////////////////////////////////
 
 type Content struct {
@@ -344,6 +354,11 @@ func (p EmptyParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p ExpandParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p AttachmentParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 

@@ -88,6 +88,28 @@ func (api *API) SetUserAgent(app, version string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// GetAttachments fetch list of attachment Content entities within a single container
+func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*ContentColletion, error) {
+	result := &ContentColletion{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/child/attachment",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
 // GetDescendants fetch a map of the descendants of a piece of Content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/descendant-descendants
 func (api *API) GetDescendants(contentID string, params ExpandParameters) (*Contents, error) {
