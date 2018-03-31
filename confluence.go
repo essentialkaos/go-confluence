@@ -88,6 +88,77 @@ func (api *API) SetUserAgent(app, version string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// GetGroups fetch collection of user groups
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#group-getGroups
+func (api *API) GetGroups(params CollectionParameters) ([]*Group, int, error) {
+	result := &struct {
+		Results []*Group `json:"results"`
+		Size    int      `json:"size"`
+	}{}
+
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/group",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, -1, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, -1, ErrNoPerms
+	}
+
+	return result.Results, result.Size, nil
+}
+
+// GetGroup fetch the user group with the group name
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#group-getGroup
+func (api *API) GetGroup(groupName string, params ExpandParameters) (*Group, error) {
+	result := &Group{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/group/"+groupName,
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result, nil
+}
+
+// GetGroupMembers fetch a collection of users in the given group
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#group-getMembers
+func (api *API) GetGroupMembers(groupName string, params CollectionParameters) ([]*User, int, error) {
+	result := &struct {
+		Results []*User `json:"results"`
+		Size    int     `json:"size"`
+	}{}
+
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/group/"+groupName+"/member",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, -1, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, -1, ErrNoPerms
+	}
+
+	return result.Results, result.Size, nil
+}
+
 // Search search for entities in Confluence using the Confluence Query Language (CQL)
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#search-search
 func (api *API) Search(params SearchParameters) (*SearchResult, error) {
@@ -113,7 +184,7 @@ func (api *API) Search(params SearchParameters) (*SearchResult, error) {
 
 // GetSpaces fetch information about a number of spaces
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#space-spaces
-func (api *API) GetSpaces(params SpaceParameters) ([]*Space, error) {
+func (api *API) GetSpaces(params SpaceParameters) ([]*Space, int, error) {
 	result := &struct {
 		Results []*Space `json:"results"`
 		Size    int      `json:"size"`
@@ -125,15 +196,15 @@ func (api *API) GetSpaces(params SpaceParameters) ([]*Space, error) {
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
 	switch statusCode {
 	case 403:
-		return nil, ErrNoPerms
+		return nil, -1, ErrNoPerms
 	}
 
-	return result.Results, nil
+	return result.Results, result.Size, nil
 }
 
 // GetSpace fetch information about a space
@@ -270,9 +341,9 @@ func (api *API) GetCurrent(params Parameters) (*User, error) {
 	return result, nil
 }
 
-// GetGroups fetch collection of groups that the given user is a member of
+// GetUserGroups fetch collection of groups that the given user is a member of
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user-getGroups
-func (api *API) GetGroups(params UserParameters) ([]*Group, error) {
+func (api *API) GetUserGroups(params UserParameters) ([]*Group, int, error) {
 	result := &struct {
 		Results []*Group `json:"results"`
 		Size    int      `json:"size"`
@@ -284,15 +355,15 @@ func (api *API) GetGroups(params UserParameters) ([]*Group, error) {
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
 	switch statusCode {
 	case 403:
-		return nil, ErrNoPerms
+		return nil, -1, ErrNoPerms
 	}
 
-	return result.Results, nil
+	return result.Results, result.Size, nil
 }
 
 // IsWatchingContent fetch information about whether a user is watching a specified content
