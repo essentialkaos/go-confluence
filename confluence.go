@@ -297,8 +297,8 @@ func (api *API) GetGroups(params UserParameters) ([]*Group, error) {
 
 // IsWatchingContent fetch information about whether a user is watching a specified content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user/watch-isWatchingContent
-func (api *API) IsWatchingContent(contentID string, params WatchParameters) (*WatchInfo, error) {
-	result := &WatchInfo{}
+func (api *API) IsWatchingContent(contentID string, params WatchParameters) (*WatchStatus, error) {
+	result := &WatchStatus{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/user/watch/content/"+contentID,
 		params, result, nil,
@@ -313,6 +313,51 @@ func (api *API) IsWatchingContent(contentID string, params WatchParameters) (*Wa
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// IsWatchingSpace fetch information about whether a user is watching a specified space
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user/watch-isWatchingSpace
+func (api *API) IsWatchingSpace(spaceKey string, params WatchParameters) (*WatchStatus, error) {
+	result := &WatchStatus{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/user/watch/space/"+spaceKey,
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoSpace
+	}
+
+	return result, nil
+}
+
+// ListWatchers fetch information about all watcher of given page
+func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) {
+	result := &WatchInfo{}
+	statusCode, err := api.doRequest(
+		"GET", "/json/listwatchers.action",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoSpace
 	}
 
 	return result, nil
@@ -366,6 +411,9 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 	if query != "" {
 		req.URI().SetQueryString(query)
 	}
+
+	// TODO: DEBUG / REMOVE ON RELEASE
+	fmt.Println("→", uri, "»", query)
 
 	if method != "GET" {
 		req.Header.SetMethod(method)

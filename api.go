@@ -255,8 +255,25 @@ type WatchParameters struct {
 	ContentType string `query:"contentType"`
 }
 
-type WatchInfo struct {
+type ListWatchersParameters struct {
+	PageID string `query:"pageId"`
+}
+
+type WatchStatus struct {
 	Watching bool `json:"watching"`
+}
+
+type WatchInfo struct {
+	PageWatchers  []*Watcher `json:"pageWatchers"`
+	SpaceWatchers []*Watcher `json:"spaceWatchers"`
+}
+
+type Watcher struct {
+	AvatarURL string `json:"avatarUrl"`
+	Name      string `json:"name"`
+	FullName  string `json:"fullName"`
+	Type      string `json:"type"`
+	UserKey   string `json:"userKey"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -304,5 +321,10 @@ func (p UserParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p WatchParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p ListWatchersParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
