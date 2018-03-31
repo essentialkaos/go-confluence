@@ -88,6 +88,48 @@ func (api *API) SetUserAgent(app, version string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// GetRestrictionsByOperation fetch info about all restrictions by operation
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/restriction-byOperation
+func (api *API) GetRestrictionsByOperation(contentID string, params ExpandParameters) (*Restrictions, error) {
+	result := &Restrictions{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/restriction/byOperation",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result, nil
+}
+
+// GetRestrictionsForOperation fetch info about all restrictions of given operation
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/restriction-forOperation
+func (api *API) GetRestrictionsForOperation(contentID, operation string, params CollectionParameters) (*Restriction, error) {
+	result := &Restriction{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/restriction/byOperation/"+operation,
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result, nil
+}
+
 // GetGroups fetch collection of user groups
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#group-getGroups
 func (api *API) GetGroups(params CollectionParameters) ([]*Group, int, error) {

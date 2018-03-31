@@ -56,7 +56,7 @@ type CollectionParameters struct {
 
 // CONTENT /////////////////////////////////////////////////////////////////////////////
 
-type Entity struct {
+type Content struct {
 	ID          string       `json:"id"`
 	Type        string       `json:"type"`
 	Status      string       `json:"status"`
@@ -67,16 +67,16 @@ type Entity struct {
 	Version     *Version     `json:"version"`
 	Operations  []*Operation `json:"operations"`
 	Children    *Contents    `json:"children"`
-	Ancestors   []*Entity    `json:"ancestors"`
+	Ancestors   []*Content   `json:"ancestors"`
 	Descendants *Contents    `json:"descendants"`
 	Body        *Body        `json:"body"`
 }
 
 type Contents struct {
-	Attachments *Content `json:"attachment"`
-	Comments    *Content `json:"comment"`
-	Pages       *Content `json:"page"`
-	Blogposts   *Content `json:"blogposts"`
+	Attachments *ContentColletion `json:"attachment"`
+	Comments    *ContentColletion `json:"comment"`
+	Pages       *ContentColletion `json:"page"`
+	Blogposts   *ContentColletion `json:"blogposts"`
 }
 
 type Body struct {
@@ -91,11 +91,11 @@ type View struct {
 	Value          string `json:"value"`
 }
 
-type Content struct {
-	Results []*Entity `json:"results"`
-	Start   int       `json:"start"`
-	Limit   int       `json:"limit"`
-	Size    int       `json:"size"`
+type ContentColletion struct {
+	Results []*Content `json:"results"`
+	Start   int        `json:"start"`
+	Limit   int        `json:"limit"`
+	Size    int        `json:"size"`
 }
 
 type Version struct {
@@ -129,11 +129,11 @@ type Operation struct {
 }
 
 type Metadata struct {
-	Labels    *Labels `json:"labels"`    // Page
-	MediaType string  `json:"mediaType"` // Attachment
+	Labels    *LabelCollection `json:"labels"`    // Page
+	MediaType string           `json:"mediaType"` // Attachment
 }
 
-type Labels struct {
+type LabelCollection struct {
 	Result []*Label `json:"results"`
 	Start  int      `json:"start"`
 	Limit  int      `json:"limit"`
@@ -163,6 +163,37 @@ type Contributors struct {
 type Publishers struct {
 	Users    []*User  `json:"users"`
 	UserKeys []string `json:"userKeys"`
+}
+
+// GROUPS //////////////////////////////////////////////////////////////////////////////
+
+type Group struct {
+	Type string `json:"type"`
+	Name string `json:"name"`
+}
+
+type GroupCollection struct {
+	Results []*Group `json:"results"`
+	Start   int      `json:"start"`
+	Limit   int      `json:"limit"`
+	Size    int      `json:"size"`
+}
+
+// RESTRICTIONS ////////////////////////////////////////////////////////////////////////
+
+type Restrictions struct {
+	Read   *Restriction `json:"read"`
+	Update *Restriction `json:"update"`
+}
+
+type Restriction struct {
+	Operation string           `json:"operation"`
+	Data      *RestrictionData `json:"restrictions"`
+}
+
+type RestrictionData struct {
+	User  *UserCollection  `json:"user"`
+	Group *GroupCollection `json:"group"`
 }
 
 // SEARCH //////////////////////////////////////////////////////////////////////////////
@@ -242,9 +273,11 @@ type User struct {
 	DisplayName    string `json:"displayName"`
 }
 
-type Group struct {
-	Type string `json:"type"`
-	Name string `json:"name"`
+type UserCollection struct {
+	Results []*User `json:"results"`
+	Start   int     `json:"start"`
+	Limit   int     `json:"limit"`
+	Size    int     `json:"size"`
 }
 
 // WATCH ///////////////////////////////////////////////////////////////////////////////
