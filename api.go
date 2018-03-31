@@ -133,19 +133,6 @@ type Metadata struct {
 	MediaType string           `json:"mediaType"` // Attachment
 }
 
-type LabelCollection struct {
-	Result []*Label `json:"results"`
-	Start  int      `json:"start"`
-	Limit  int      `json:"limit"`
-	Size   int      `json:"size"`
-}
-
-type Label struct {
-	Prefix string `json:"prefix"`
-	Name   string `json:"name"`
-	ID     string `json:"id"`
-}
-
 type History struct {
 	Latest          bool          `json:"latest"`
 	CreatedBy       *User         `json:"createdBy"`
@@ -163,6 +150,27 @@ type Contributors struct {
 type Publishers struct {
 	Users    []*User  `json:"users"`
 	UserKeys []string `json:"userKeys"`
+}
+
+// LABELS //////////////////////////////////////////////////////////////////////////////
+
+type LabelParameters struct {
+	Prefix string `query:"prefix"`
+	Start  int    `query:"start"`
+	Limit  int    `query:"limit"`
+}
+
+type LabelCollection struct {
+	Result []*Label `json:"results"`
+	Start  int      `json:"start"`
+	Limit  int      `json:"limit"`
+	Size   int      `json:"size"`
+}
+
+type Label struct {
+	Prefix string `json:"prefix"`
+	Name   string `json:"name"`
+	ID     string `json:"id"`
 }
 
 // GROUPS //////////////////////////////////////////////////////////////////////////////
@@ -246,6 +254,13 @@ type Space struct {
 	Name string `json:"name"`
 	Icon *Icon  `json:"icon"`
 	Type string `json:"type"`
+}
+
+type SpaceCollection struct {
+	Results []*Space `json:"results"`
+	Start   int      `json:"start"`
+	Limit   int      `json:"limit"`
+	Size    int      `json:"size"`
 }
 
 type Icon struct {
@@ -334,6 +349,11 @@ func (p ExpandParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p CollectionParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p LabelParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 
