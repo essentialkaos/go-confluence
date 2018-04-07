@@ -12,7 +12,7 @@
 
 `go-confluence` is a Go package for wroking with [Confluence REST API](https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/).
 
-Currently, this package support only getting data from API (i.e., you cannot create or modify data using this package).
+Currently, this package support only getting data from API (_i.e., you cannot create or modify data using this package_).
 
 ### Installation
 
@@ -22,7 +22,7 @@ Before the initial install allows git to use redirects for [pkg.re](https://gith
 git config --global http.https://pkg.re.followRedirects true
 ```
 
-Make sure you have a working Go 1.8+ workspace ([instructions](https://golang.org/doc/install)), then:
+Make sure you have a working Go 1.8+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ````
 go get pkg.re/essentialkaos/go-confluence.v1
