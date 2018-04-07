@@ -30,6 +30,41 @@ For update to latest stable release, do:
 go get -u pkg.re/essentialkaos/go-confluence.v1
 ```
 
+### Usage example
+
+```go
+package main
+
+import (
+  "fmt"
+  cf "pkg.re/essentialkaos/go-confluence.v1"
+)
+
+func main() {
+  api, err := cf.NewAPI("https://confluence.domain.com", "john", "MySuppaPAssWOrd")
+
+  if err != nil {
+    fmt.Printf("Error: %v\n", err)
+    return
+  }
+
+  content, err := cf.GetContentByID(
+    "18173522", cf.ContentIDParameters{
+      Version: 4,
+      Expand:  []string{"space", "body.view", "version"},
+    },
+  )
+
+  if err != nil {
+    fmt.Printf("Error: %v\n", err)
+    return
+  }
+
+  fmt.Println("ID: %s\n", content.ID)
+}
+
+```
+
 ### License
 
 [EKOL](https://essentialkaos.com/ekol)

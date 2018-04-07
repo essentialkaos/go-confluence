@@ -642,9 +642,9 @@ func (api *API) GetAnonymous() (*User, error) {
 	return result, nil
 }
 
-// GetCurrent fetch information about the current logged in user
+// GetCurrentUser fetch information about the current logged in user
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user-getCurrent
-func (api *API) GetCurrent(params Parameters) (*User, error) {
+func (api *API) GetCurrentUser(params ExpandParameters) (*User, error) {
 	result := &User{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/user/current",
