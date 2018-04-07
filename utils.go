@@ -8,9 +8,10 @@ package confluence
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"reflect"
-	"strconv"
 	"strings"
+	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -34,12 +35,18 @@ func paramsToQuery(params interface{}) string {
 
 		case "int":
 			if value.Int() != 0 {
-				result += field.Tag.Get("query") + "=" + strconv.FormatInt(value.Int(), 10) + "&"
+				result += field.Tag.Get("query") + "=" + fmt.Sprintf("%d", value.Int()) + "&"
 			}
 
 		case "bool":
 			if value.Bool() {
 				result += field.Tag.Get("query") + "=1&"
+			}
+
+		case "time.Time":
+			d := value.Interface().(time.Time)
+			if !d.IsZero() {
+				result += field.Tag.Get("query") + "=" + fmt.Sprintf("%d-%02d-%02d", d.Year(), d.Month(), d.Day()) + "&"
 			}
 
 		case "[]string":

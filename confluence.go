@@ -28,11 +28,10 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type API struct {
-	// Client is client for http requests
-	Client *fasthttp.Client
+	Client *fasthttp.Client // Client is client for http requests
 
-	url                string // Confluence URL
-	basicAuth          string // Basic auth
+	url                string // confluence URL
+	basicAuth          string // basic auth
 	clientInitComplete bool   // client init flag
 }
 
@@ -87,6 +86,69 @@ func (api *API) SetUserAgent(app, version string) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
+
+// GetAuditRecords fetch a list of AuditRecord instances dating back to a certain time
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#audit-getAuditRecords
+func (api *API) GetAuditRecords(params AuditParameters) (*AuditRecordCollection, error) {
+	result := &AuditRecordCollection{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/audit",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result, nil
+}
+
+// GetAuditRecordsSince fetch a list of AuditRecord instances dating back to a certain time
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#audit-getAuditRecords
+func (api *API) GetAuditRecordsSince(params AuditSinceParameters) (*AuditRecordCollection, error) {
+	result := &AuditRecordCollection{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/audit/since",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result, nil
+}
+
+// GetAuditRetention fetch the current retention period
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#audit-getRetentionPeriod
+func (api *API) GetAuditRetention() (*AuditRetentionInfo, error) {
+	result := &AuditRetentionInfo{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/audit/retention",
+		EmptyParameters{}, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result, nil
+}
 
 // GetContent fetch list of Content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getContent

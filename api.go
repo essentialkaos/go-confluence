@@ -8,6 +8,7 @@ package confluence
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"strconv"
 	"strings"
 	"time"
 )
@@ -36,6 +37,14 @@ const (
 	STATUS_ARCHIVED = "archived"
 )
 
+const (
+	UNITS_MINUTES = "minutes"
+	UNITS_HOURS   = "hours"
+	UNITS_DAYS    = "days"
+	UNITS_MONTHS  = "months"
+	UNITS_YEARS   = "years"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type Parameters interface {
@@ -43,6 +52,10 @@ type Parameters interface {
 }
 
 type Date struct {
+	time.Time
+}
+
+type Timestamp struct {
 	time.Time
 }
 
@@ -60,6 +73,46 @@ type CollectionParameters struct {
 	Limit  int      `query:"limit"`
 }
 
+// AUDIT ///////////////////////////////////////////////////////////////////////////////
+
+type AuditParameters struct {
+	StartDate    time.Time `query:"startDate"`
+	EndDate      time.Time `query:"endDate"`
+	SearchString string    `query:"searchString"`
+	Start        int       `query:"start"`
+	Limit        int       `query:"limit"`
+}
+
+type AuditSinceParameters struct {
+	Number       int    `query:"number"`
+	Units        string `query:"units"`
+	SearchString string `query:"searchString"`
+	Start        int    `query:"start"`
+	Limit        int    `query:"limit"`
+}
+
+type AuditRecord struct {
+	Author        *User     `json:"author"`
+	RemoteAddress string    `json:"remoteAddress"`
+	CreationDate  Timestamp `json:"creationDate"`
+	Summary       string    `json:"summary"`
+	Description   string    `json:"description"`
+	Category      string    `json:"category"`
+	SysAdmin      bool      `json:"sysAdmin"`
+}
+
+type AuditRecordCollection struct {
+	Results []*AuditRecord `json:"results"`
+	Start   int            `json:"start"`
+	Limit   int            `json:"limit"`
+	Size    int            `json:"size"`
+}
+
+type AuditRetentionInfo struct {
+	Number int    `json:""`
+	Units  string `json:""`
+}
+
 // ATTACHMENTS /////////////////////////////////////////////////////////////////////////
 
 type AttachmentParameters struct {
@@ -73,14 +126,14 @@ type AttachmentParameters struct {
 // CONTENT /////////////////////////////////////////////////////////////////////////////
 
 type ContentParameters struct {
-	Type       string   `query:"type"`
-	SpaceKey   string   `query:"spaceKey"`
-	Title      string   `query:"title"`
-	Status     string   `query:"status"`
-	PostingDay string   `query:"postingDay"`
-	Expand     []string `query:"expand"`
-	Start      int      `query:"start"`
-	Limit      int      `query:"limit"`
+	Type       string    `query:"type"`
+	SpaceKey   string    `query:"spaceKey"`
+	Title      string    `query:"title"`
+	Status     string    `query:"status"`
+	PostingDay time.Time `query:"postingDay"`
+	Expand     []string  `query:"expand"`
+	Start      int       `query:"start"`
+	Limit      int       `query:"limit"`
 }
 
 type ContentIDParameters struct {
@@ -377,6 +430,19 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// UnmarshalJSON is custom Timestamp format unmarshaler
+func (d *Timestamp) UnmarshalJSON(b []byte) error {
+	ts, err := strconv.ParseInt(string(b), 10, 64)
+
+	if err != nil {
+		return err
+	}
+
+	d.Time = time.Unix(ts/1000, (ts%1000)*1000000)
+
+	return err
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // ToQuery convert params to URL query
@@ -391,6 +457,16 @@ func (p ExpandParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p CollectionParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p AuditParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p AuditSinceParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 
