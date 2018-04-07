@@ -15,6 +15,12 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
+	CONTENT_TYPE_PAGE       = "page"
+	CONTENT_TYPE_COMMENT    = "comment"
+	CONTENT_TYPE_ATTACHMENT = "attachment"
+)
+
+const (
 	SEARCH_EXCERPT_INDEXED   = "indexed"
 	SEARCH_EXCERPT_HIGHLIGHT = "highlight"
 	SEARCH_EXCERPT_NONE      = "none"
@@ -26,8 +32,8 @@ const (
 )
 
 const (
-	SPACE_STATUS_CURRENT  = "current"
-	SPACE_STATUS_ARCHIVED = "archived"
+	STATUS_CURRENT  = "current"
+	STATUS_ARCHIVED = "archived"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -81,6 +87,15 @@ type ContentIDParameters struct {
 	Status  string   `query:"status"`
 	Version int      `query:"version"`
 	Expand  []string `query:"expand"`
+}
+
+type ChildrenParameters struct {
+	ParentVersion int      `query:"parentVersion"`
+	Location      string   `query:"location"`
+	Depth         string   `query:"depth"`
+	Expand        []string `query:"expand"`
+	Start         int      `query:"start"`
+	Limit         int      `query:"limit"`
 }
 
 type Content struct {
@@ -386,6 +401,11 @@ func (p ContentParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p ContentIDParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p ChildrenParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 

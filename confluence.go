@@ -113,10 +113,10 @@ func (api *API) GetContent(params ContentParameters) (*ContentColletion, error) 
 
 // GetContentByID fetch a piece of Content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getContentById
-func (api *API) GetContentByID(id string, params ContentIDParameters) (*Content, error) {
+func (api *API) GetContentByID(contentID string, params ContentIDParameters) (*Content, error) {
 	result := &Content{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/content/"+id,
+		"GET", "/rest/api/content/"+contentID,
 		params, result, nil,
 	)
 
@@ -136,10 +136,79 @@ func (api *API) GetContentByID(id string, params ContentIDParameters) (*Content,
 
 // GetContentHistory fetch the history of a particular piece of content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getHistory
-func (api *API) GetContentHistory(id string, params ExpandParameters) (*History, error) {
+func (api *API) GetContentHistory(contentID string, params ExpandParameters) (*History, error) {
 	result := &History{}
 	statusCode, err := api.doRequest(
-		"GET", "/rest/api/content/"+id+"/history",
+		"GET", "/rest/api/content/"+contentID+"/history",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetContentChild fetch a map of the direct children of a piece of Content
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-children
+func (api *API) GetContentChildren(contentID string, params ChildrenParameters) (*Contents, error) {
+	result := &Contents{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/child",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetContentChildrenByType the direct children of a piece of Content, limited to a single child type
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-childrenOfType
+func (api *API) GetContentChildrenByType(contentID, contentType string, params ChildrenParameters) (*ContentColletion, error) {
+	result := &ContentColletion{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/child/"+contentType,
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetContentComments fetch the comments of a content
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-commentsOfContent
+func (api *API) GetContentComments(contentID string, params ChildrenParameters) (*ContentColletion, error) {
+	result := &ContentColletion{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+contentID+"/child/comment",
 		params, result, nil,
 	)
 
