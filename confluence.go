@@ -621,9 +621,9 @@ func (api *API) GetUser(params UserParameters) (*User, error) {
 	return result, nil
 }
 
-// GetAnonymous fetch information about the how anonymous is represented in confluence
+// GetAnonymousUser fetch information about the how anonymous is represented in confluence
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user-getAnonymous
-func (api *API) GetAnonymous() (*User, error) {
+func (api *API) GetAnonymousUser() (*User, error) {
 	result := &User{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/user/anonymous",
