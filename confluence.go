@@ -219,7 +219,7 @@ func (api *API) GetContentHistory(contentID string, params ExpandParameters) (*H
 	return result, nil
 }
 
-// GetContentChild fetch a map of the direct children of a piece of Content
+// GetContentChildren fetch a map of the direct children of a piece of Content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-children
 func (api *API) GetContentChildren(contentID string, params ChildrenParameters) (*Contents, error) {
 	result := &Contents{}
