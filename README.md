@@ -1,8 +1,11 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-confluence.svg"/></a></p>
 
+<p align="center"><a href="#installation">Installation</a> • <a href="#usage-example">Usage example</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
+
 <p align="center">
   <a href="https://godoc.org/pkg.re/essentialkaos/go-confluence.v1"><img src="https://godoc.org/pkg.re/essentialkaos/go-confluence.v1?status.svg"></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/go-confluence"><img src="https://goreportcard.com/badge/github.com/essentialkaos/go-confluence"></a>
+  <a href="https://travis-ci.org/essentialkaos/go-confluence"><img src="https://travis-ci.org/essentialkaos/go-confluence.svg"></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-go-confluence-master"><img alt="codebeat badge" src="https://codebeat.co/badges/c367cff1-4b71-43de-9a47-9fb34e8c34df" /></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
@@ -65,6 +68,13 @@ func main() {
 }
 
 ```
+
+### Build Status
+
+| Branch     | Status |
+|------------|--------|
+| `master` (_Stable_) | [![Build Status](https://travis-ci.org/essentialkaos/go-confluence.svg?branch=master)](https://travis-ci.org/essentialkaos/go-confluence) |
+| `develop` (_Unstable_) | [![Build Status](https://travis-ci.org/essentialkaos/go-confluence.svg?branch=develop)](https://travis-ci.org/essentialkaos/go-confluence) |
 
 ### License
 
