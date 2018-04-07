@@ -66,6 +66,23 @@ type AttachmentParameters struct {
 
 // CONTENT /////////////////////////////////////////////////////////////////////////////
 
+type ContentParameters struct {
+	Type       string   `query:"type"`
+	SpaceKey   string   `query:"spaceKey"`
+	Title      string   `query:"title"`
+	Status     string   `query:"status"`
+	PostingDay string   `query:"postingDay"`
+	Expand     []string `query:"expand"`
+	Start      int      `query:"start"`
+	Limit      int      `query:"limit"`
+}
+
+type ContentIDParameters struct {
+	Status  string   `query:"status"`
+	Version int      `query:"version"`
+	Expand  []string `query:"expand"`
+}
+
 type Content struct {
 	ID          string       `json:"id"`
 	Type        string       `json:"type"`
@@ -358,12 +375,22 @@ func (p ExpandParameters) ToQuery() string {
 }
 
 // ToQuery convert params to URL query
-func (p AttachmentParameters) ToQuery() string {
+func (p CollectionParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 
 // ToQuery convert params to URL query
-func (p CollectionParameters) ToQuery() string {
+func (p ContentParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p ContentIDParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p AttachmentParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 

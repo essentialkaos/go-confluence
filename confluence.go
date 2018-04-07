@@ -88,7 +88,77 @@ func (api *API) SetUserAgent(app, version string) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// GetContent fetch list of Content
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getContent
+func (api *API) GetContent(params ContentParameters) (*ContentColletion, error) {
+	result := &ContentColletion{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetContentByID fetch a piece of Content
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getContentById
+func (api *API) GetContentByID(id string, params ContentIDParameters) (*Content, error) {
+	result := &Content{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+id,
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
+// GetContentHistory fetch the history of a particular piece of content
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getHistory
+func (api *API) GetContentHistory(id string, params ExpandParameters) (*History, error) {
+	result := &History{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/"+id+"/history",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	}
+
+	return result, nil
+}
+
 // GetAttachments fetch list of attachment Content entities within a single container
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child/attachment-getAttachments
 func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*ContentColletion, error) {
 	result := &ContentColletion{}
 	statusCode, err := api.doRequest(
@@ -351,9 +421,9 @@ func (api *API) GetSpace(spaceKey string, params Parameters) (*Space, error) {
 	return result, nil
 }
 
-// GetContent fetch the content in this given space
+// GetSpaceContent fetch the content in this given space
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#space-contents
-func (api *API) GetContent(spaceKey string, params SpaceParameters) (*Contents, error) {
+func (api *API) GetSpaceContent(spaceKey string, params SpaceParameters) (*Contents, error) {
 	result := &Contents{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/space/"+spaceKey+"/content",
@@ -374,9 +444,9 @@ func (api *API) GetContent(spaceKey string, params SpaceParameters) (*Contents, 
 	return result, nil
 }
 
-// GetContentWithType fetch the content in this given space with the given type
+// GetSpaceContentWithType fetch the content in this given space with the given type
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#space-contentsWithType
-func (api *API) GetContentWithType(spaceKey, contentType string, params SpaceParameters) (*Contents, error) {
+func (api *API) GetSpaceContentWithType(spaceKey, contentType string, params SpaceParameters) (*Contents, error) {
 	result := &Contents{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/space/"+spaceKey+"/content/"+contentType,
