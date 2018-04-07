@@ -10,7 +10,7 @@
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
-`go-confluence` is a Go package for wroking with [Confluence REST API](https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/).
+`go-confluence` is a Go package for working with [Confluence REST API](https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/).
 
 Currently, this package support only getting data from API (_i.e., you cannot create or modify data using this package_).
 
