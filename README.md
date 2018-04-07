@@ -46,6 +46,7 @@ import (
 
 func main() {
   api, err := cf.NewAPI("https://confluence.domain.com", "john", "MySuppaPAssWOrd")
+  api.SetUserAgent("MyApp", "1.2.3")
 
   if err != nil {
     fmt.Printf("Error: %v\n", err)

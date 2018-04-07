@@ -22,7 +22,7 @@ import (
 
 const (
 	NAME    = "Go-Confluence"
-	VERSION = "1.0.0"
+	VERSION = "1.1.0"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -30,9 +30,8 @@ const (
 type API struct {
 	Client *fasthttp.Client // Client is client for http requests
 
-	url                string // confluence URL
-	basicAuth          string // basic auth
-	clientInitComplete bool   // client init flag
+	url       string // confluence URL
+	basicAuth string // basic auth
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -48,10 +47,6 @@ var (
 	ErrNoUserPerms       = errors.New("User does not have permission to view users")
 	ErrNoUserFound       = errors.New("User with the given username or userkey does not exist")
 )
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-var clientInitComplete bool
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -804,9 +799,6 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 	if query != "" {
 		req.URI().SetQueryString(query)
 	}
-
-	// TODO: DEBUG / REMOVE ON RELEASE
-	fmt.Println("→", uri, "»", query)
 
 	if method != "GET" {
 		req.Header.SetMethod(method)
