@@ -102,6 +102,8 @@ func (api *API) GetCalendarEvents(params CalendarParameters) (*CalendarEventColl
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// codebeat:disable[CYCLO]
+
 // ToQuery convert params to URL query
 func (p CalendarParameters) ToQuery() string {
 	result := "subCalendarId=" + p.SubCalendarID + "&"
@@ -128,3 +130,5 @@ func (p CalendarParameters) ToQuery() string {
 
 	return result + "_=" + strconv.FormatInt(now.UnixNano(), 10)
 }
+
+// codebeat:enable[CYCLO]
