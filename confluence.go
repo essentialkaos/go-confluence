@@ -219,7 +219,7 @@ func (api *API) GetContentHistory(contentID string, params ExpandParameters) (*H
 	return result, nil
 }
 
-// GetContentChild fetch a map of the direct children of a piece of Content
+// GetContentChildren fetch a map of the direct children of a piece of Content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-children
 func (api *API) GetContentChildren(contentID string, params ChildrenParameters) (*Contents, error) {
 	result := &Contents{}
@@ -754,6 +754,8 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// codebeat:disable[ARITY]
+
 // doRequest create and execute request
 func (api *API) doRequest(method, uri string, params Parameters, result, body interface{}) (int, error) {
 	req := api.acquireRequest(method, uri, params)
@@ -788,6 +790,8 @@ func (api *API) doRequest(method, uri string, params Parameters, result, body in
 
 	return statusCode, err
 }
+
+// codebeat:enable[ARITY]
 
 // acquireRequest acquire new request with given params
 func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.Request {
