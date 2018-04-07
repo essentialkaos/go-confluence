@@ -92,13 +92,13 @@ type AuditSinceParameters struct {
 }
 
 type AuditRecord struct {
-	Author        *User     `json:"author"`
-	RemoteAddress string    `json:"remoteAddress"`
-	CreationDate  Timestamp `json:"creationDate"`
-	Summary       string    `json:"summary"`
-	Description   string    `json:"description"`
-	Category      string    `json:"category"`
-	SysAdmin      bool      `json:"sysAdmin"`
+	Author        *User      `json:"author"`
+	RemoteAddress string     `json:"remoteAddress"`
+	CreationDate  *Timestamp `json:"creationDate"`
+	Summary       string     `json:"summary"`
+	Description   string     `json:"description"`
+	Category      string     `json:"category"`
+	SysAdmin      bool       `json:"sysAdmin"`
 }
 
 type AuditRecordCollection struct {
@@ -109,8 +109,8 @@ type AuditRecordCollection struct {
 }
 
 type AuditRetentionInfo struct {
-	Number int    `json:""`
-	Units  string `json:""`
+	Number int    `json:"number"`
+	Units  string `json:"units"`
 }
 
 // ATTACHMENTS /////////////////////////////////////////////////////////////////////////
