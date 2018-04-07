@@ -754,6 +754,8 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// codebeat:disable[ARITY]
+
 // doRequest create and execute request
 func (api *API) doRequest(method, uri string, params Parameters, result, body interface{}) (int, error) {
 	req := api.acquireRequest(method, uri, params)
@@ -788,6 +790,8 @@ func (api *API) doRequest(method, uri string, params Parameters, result, body in
 
 	return statusCode, err
 }
+
+// codebeat:enable[ARITY]
 
 // acquireRequest acquire new request with given params
 func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.Request {
