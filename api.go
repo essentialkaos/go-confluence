@@ -15,28 +15,33 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Content type
 const (
 	CONTENT_TYPE_PAGE       = "page"
 	CONTENT_TYPE_COMMENT    = "comment"
 	CONTENT_TYPE_ATTACHMENT = "attachment"
 )
 
+// Excerpt values
 const (
 	SEARCH_EXCERPT_INDEXED   = "indexed"
 	SEARCH_EXCERPT_HIGHLIGHT = "highlight"
 	SEARCH_EXCERPT_NONE      = "none"
 )
 
+// Space type
 const (
 	SPACE_TYPE_PERSONAL = "personal"
 	SPACE_TYPE_GLOBAL   = "global"
 )
 
+// Content/space status
 const (
 	STATUS_CURRENT  = "current"
 	STATUS_ARCHIVED = "archived"
 )
 
+// Units
 const (
 	UNITS_MINUTES = "minutes"
 	UNITS_HOURS   = "hours"
@@ -47,26 +52,32 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Parameters is interface for params structs
 type Parameters interface {
 	ToQuery() string
 }
 
+// Date is RFC3339 encoded date
 type Date struct {
 	time.Time
 }
 
+// Timestamp is UNIX timestamp in ms
 type Timestamp struct {
 	time.Time
 }
 
+// EmptyParameters is empty parameters
 type EmptyParameters struct {
 	// nothing
 }
 
+// ExpandParameters is params with field expand info
 type ExpandParameters struct {
 	Expand []string `query:"expand"`
 }
 
+// CollectionParameters is params with pagination info
 type CollectionParameters struct {
 	Expand []string `query:"expand"`
 	Start  int      `query:"start"`
@@ -75,6 +86,7 @@ type CollectionParameters struct {
 
 // AUDIT ///////////////////////////////////////////////////////////////////////////////
 
+// AuditParameters is params for fetching audit data
 type AuditParameters struct {
 	StartDate    time.Time `query:"startDate"`
 	EndDate      time.Time `query:"endDate"`
@@ -83,6 +95,7 @@ type AuditParameters struct {
 	Limit        int       `query:"limit"`
 }
 
+// AuditSinceParameters is params for fetching audit data
 type AuditSinceParameters struct {
 	Number       int    `query:"number"`
 	Units        string `query:"units"`
@@ -91,6 +104,7 @@ type AuditSinceParameters struct {
 	Limit        int    `query:"limit"`
 }
 
+// AuditRecord represents audit record
 type AuditRecord struct {
 	Author        *User      `json:"author"`
 	RemoteAddress string     `json:"remoteAddress"`
@@ -101,6 +115,7 @@ type AuditRecord struct {
 	SysAdmin      bool       `json:"sysAdmin"`
 }
 
+// AuditRecordCollection contains paginated list of audit record
 type AuditRecordCollection struct {
 	Results []*AuditRecord `json:"results"`
 	Start   int            `json:"start"`
@@ -108,6 +123,7 @@ type AuditRecordCollection struct {
 	Size    int            `json:"size"`
 }
 
+// AuditRetentionInfo contains info about retention time
 type AuditRetentionInfo struct {
 	Number int    `json:"number"`
 	Units  string `json:"units"`
@@ -115,6 +131,7 @@ type AuditRetentionInfo struct {
 
 // ATTACHMENTS /////////////////////////////////////////////////////////////////////////
 
+// AttachmentParameters is params for fetching attachments info
 type AttachmentParameters struct {
 	Filename  string   `query:"filename"`
 	MediaType string   `query:"mediaType"`
@@ -125,6 +142,7 @@ type AttachmentParameters struct {
 
 // CONTENT /////////////////////////////////////////////////////////////////////////////
 
+// ContentParameters is params for fetching content info
 type ContentParameters struct {
 	Type       string    `query:"type"`
 	SpaceKey   string    `query:"spaceKey"`
@@ -136,12 +154,14 @@ type ContentParameters struct {
 	Limit      int       `query:"limit"`
 }
 
+// ContentIDParameters is params for fetching content info
 type ContentIDParameters struct {
 	Status  string   `query:"status"`
 	Version int      `query:"version"`
 	Expand  []string `query:"expand"`
 }
 
+// ChildrenParameters is params for fetching content child info
 type ChildrenParameters struct {
 	ParentVersion int      `query:"parentVersion"`
 	Location      string   `query:"location"`
@@ -151,6 +171,7 @@ type ChildrenParameters struct {
 	Limit         int      `query:"limit"`
 }
 
+// Content contains content info
 type Content struct {
 	ID          string       `json:"id"`
 	Type        string       `json:"type"`
@@ -167,6 +188,7 @@ type Content struct {
 	Body        *Body        `json:"body"`
 }
 
+// ContentColletion represents paginated list of content
 type ContentColletion struct {
 	Results []*Content `json:"results"`
 	Start   int        `json:"start"`
@@ -174,6 +196,7 @@ type ContentColletion struct {
 	Size    int        `json:"size"`
 }
 
+// Contents contains all types of content
 type Contents struct {
 	Attachments *ContentColletion `json:"attachment"`
 	Comments    *ContentColletion `json:"comment"`
@@ -181,6 +204,7 @@ type Contents struct {
 	Blogposts   *ContentColletion `json:"blogposts"`
 }
 
+// Body contains content data
 type Body struct {
 	View        *View `json:"view"`
 	ExportView  *View `json:"export_view"`
@@ -188,11 +212,13 @@ type Body struct {
 	StorageView *View `json:"storage"`
 }
 
+// View is data view
 type View struct {
 	Representation string `json:"representation"`
 	Value          string `json:"value"`
 }
 
+// Version contains info about content version
 type Version struct {
 	By        *User    `json:"by"`
 	When      *Date    `json:"when"`
@@ -203,6 +229,7 @@ type Version struct {
 	Content   *Content `json:"content"`
 }
 
+// Extensions contains info about content extensions
 type Extensions struct {
 	Position   string      `json:"position"`   // Page
 	MediaType  string      `json:"mediaType"`  // Attachment
@@ -212,22 +239,26 @@ type Extensions struct {
 	Resolution *Resolution `json:"resolution"` // Comment
 }
 
+// Resolution contains resolution info
 type Resolution struct {
 	Status           string `json:"status"`
 	LastModifier     *User  `json:"lastModifier"`
 	LastModifiedDate *Date  `json:"lastModifiedDate"`
 }
 
+// Operation contains operation info
 type Operation struct {
 	Name       string `json:"operation"`
 	TargetType string `json:"targetType"`
 }
 
+// Metadata contains metadata records
 type Metadata struct {
 	Labels    *LabelCollection `json:"labels"`    // Page
 	MediaType string           `json:"mediaType"` // Attachment
 }
 
+// History contains info about content history
 type History struct {
 	Latest          bool          `json:"latest"`
 	CreatedBy       *User         `json:"createdBy"`
@@ -238,10 +269,12 @@ type History struct {
 	Contributors    *Contributors `json:"contributors"`
 }
 
+// Contributors contains contributors list
 type Contributors struct {
 	Publishers *Publishers `json:"publishers"`
 }
 
+// Publishers contains info about users
 type Publishers struct {
 	Users    []*User  `json:"users"`
 	UserKeys []string `json:"userKeys"`
@@ -249,12 +282,14 @@ type Publishers struct {
 
 // LABELS //////////////////////////////////////////////////////////////////////////////
 
+// LabelParameters is params for fetching labels
 type LabelParameters struct {
 	Prefix string `query:"prefix"`
 	Start  int    `query:"start"`
 	Limit  int    `query:"limit"`
 }
 
+// LabelCollection contains paginated list of labels
 type LabelCollection struct {
 	Result []*Label `json:"results"`
 	Start  int      `json:"start"`
@@ -262,6 +297,7 @@ type LabelCollection struct {
 	Size   int      `json:"size"`
 }
 
+// Label contains label info
 type Label struct {
 	Prefix string `json:"prefix"`
 	Name   string `json:"name"`
@@ -270,11 +306,13 @@ type Label struct {
 
 // GROUPS //////////////////////////////////////////////////////////////////////////////
 
+// Group contains group info
 type Group struct {
 	Type string `json:"type"`
 	Name string `json:"name"`
 }
 
+// GroupCollection contains paginated list of groups
 type GroupCollection struct {
 	Results []*Group `json:"results"`
 	Start   int      `json:"start"`
@@ -284,16 +322,19 @@ type GroupCollection struct {
 
 // RESTRICTIONS ////////////////////////////////////////////////////////////////////////
 
+// Restrictions contains info about all restrictions
 type Restrictions struct {
 	Read   *Restriction `json:"read"`
 	Update *Restriction `json:"update"`
 }
 
+// Restriction contains restriction info for single operation
 type Restriction struct {
 	Operation string           `json:"operation"`
 	Data      *RestrictionData `json:"restrictions"`
 }
 
+// RestrictionData contains restrictions data
 type RestrictionData struct {
 	User  *UserCollection  `json:"user"`
 	Group *GroupCollection `json:"group"`
@@ -301,6 +342,7 @@ type RestrictionData struct {
 
 // SEARCH //////////////////////////////////////////////////////////////////////////////
 
+// SearchParameters is params for fetching search results
 type SearchParameters struct {
 	CQL                   string   `query:"cql"`
 	CQLContext            string   `query:"cqlcontext"`
@@ -311,6 +353,7 @@ type SearchParameters struct {
 	Limit                 int      `query:"limit"`
 }
 
+// SearchResult contains contains paginated list of search results
 type SearchResult struct {
 	Results        []*SearchEntity `json:"results"`
 	Start          int             `json:"start"`
@@ -321,6 +364,7 @@ type SearchResult struct {
 	SearchDuration int             `json:"searchDuration"`
 }
 
+// SearchEntity contains search result
 type SearchEntity struct {
 	Title        string `json:"title"`
 	Excerpt      string `json:"excerpt"`
@@ -331,6 +375,7 @@ type SearchEntity struct {
 
 // SPACE ///////////////////////////////////////////////////////////////////////////////
 
+// SpaceParameters is params for fetching info about space
 type SpaceParameters struct {
 	SpaceKey  []string `query:"spaceKey,unwrap"`
 	Type      string   `query:"type"`
@@ -343,6 +388,7 @@ type SpaceParameters struct {
 	Limit     int      `query:"limit"`
 }
 
+// Space contains info about space
 type Space struct {
 	ID   int    `json:"id"`
 	Key  string `json:"key"`
@@ -351,6 +397,7 @@ type Space struct {
 	Type string `json:"type"`
 }
 
+// SpaceCollection contains paginated list of spaces
 type SpaceCollection struct {
 	Results []*Space `json:"results"`
 	Start   int      `json:"start"`
@@ -358,6 +405,7 @@ type SpaceCollection struct {
 	Size    int      `json:"size"`
 }
 
+// Icon contains icon info
 type Icon struct {
 	Path      string `json:"path"`
 	Width     int    `json:"width"`
@@ -367,6 +415,7 @@ type Icon struct {
 
 // USER ////////////////////////////////////////////////////////////////////////////////
 
+// UserParameters is params for fetching info about user
 type UserParameters struct {
 	Key      string   `query:"key"`
 	Username string   `query:"username"`
@@ -375,6 +424,7 @@ type UserParameters struct {
 	Limit    int      `query:"limit"`
 }
 
+// User contains user info
 type User struct {
 	Type           string `json:"type"`
 	Username       string `json:"username"`
@@ -383,6 +433,7 @@ type User struct {
 	DisplayName    string `json:"displayName"`
 }
 
+// UserCollection contains paginated list of users
 type UserCollection struct {
 	Results []*User `json:"results"`
 	Start   int     `json:"start"`
@@ -392,25 +443,30 @@ type UserCollection struct {
 
 // WATCH ///////////////////////////////////////////////////////////////////////////////
 
+// WatchParameters is params for fetching info about watchers
 type WatchParameters struct {
 	Key         string `query:"key"`
 	Username    string `query:"username"`
 	ContentType string `query:"contentType"`
 }
 
+// ListWatchersParameters is params for fetching info about page watchers
 type ListWatchersParameters struct {
 	PageID string `query:"pageId"`
 }
 
+// WatchStatus contains watching status
 type WatchStatus struct {
 	Watching bool `json:"watching"`
 }
 
+// WatchInfo contains info about watchers
 type WatchInfo struct {
 	PageWatchers  []*Watcher `json:"pageWatchers"`
 	SpaceWatchers []*Watcher `json:"spaceWatchers"`
 }
 
+// Watcher contains watcher info
 type Watcher struct {
 	AvatarURL string `json:"avatarUrl"`
 	Name      string `json:"name"`
