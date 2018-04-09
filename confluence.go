@@ -21,12 +21,13 @@ import (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
-	NAME    = "Go-Confluence"
-	VERSION = "1.1.0"
+	NAME    = "Go-Confluence" // NAME is package name
+	VERSION = "1.1.0"         // VERSION is package version
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// API is Confluence API struct
 type API struct {
 	Client *fasthttp.Client // Client is client for http requests
 
@@ -36,6 +37,7 @@ type API struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// API errors
 var (
 	ErrInitEmptyURL      = errors.New("URL can't be empty")
 	ErrInitEmptyUser     = errors.New("User can't be empty")

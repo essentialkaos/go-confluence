@@ -19,6 +19,7 @@ const _CALENDAR_TIME_FORMAT = "2006-01-02T15:04:05Z"
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// CalendarParameters contains params for requests to Team Calendars API
 type CalendarParameters struct {
 	SubCalendarID  string
 	UserTimezoneID string
@@ -26,11 +27,13 @@ type CalendarParameters struct {
 	End            time.Time
 }
 
+// CalendarEventCollection contains slice with events
 type CalendarEventCollection struct {
 	Success bool             `json:"success"`
 	Events  []*CalendarEvent `json:"events"`
 }
 
+// CalendarEvent represents Team Calendars event
 type CalendarEvent struct {
 	WorkingURL        string `json:"workingUrl"`
 	Description       string `json:"description"`
@@ -61,6 +64,7 @@ type CalendarEvent struct {
 	Invitees []*CalendarUser `json:"invitees"`
 }
 
+// CalendarUser represents Team Calendars user
 type CalendarUser struct {
 	DisplayName   string `json:"displayName"`
 	Name          string `json:"name"`
@@ -72,6 +76,7 @@ type CalendarUser struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ErrNoCalendarID is API error
 var ErrNoCalendarID = errors.New("Sub calendar ID must be defined")
 
 // ////////////////////////////////////////////////////////////////////////////////// //
