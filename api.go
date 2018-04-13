@@ -17,9 +17,10 @@ import (
 
 // Content type
 const (
-	CONTENT_TYPE_PAGE       = "page"
-	CONTENT_TYPE_COMMENT    = "comment"
 	CONTENT_TYPE_ATTACHMENT = "attachment"
+	CONTENT_TYPE_BLOGPOST   = "blogpost"
+	CONTENT_TYPE_COMMENT    = "comment"
+	CONTENT_TYPE_PAGE       = "page"
 )
 
 // Excerpt values
@@ -35,10 +36,17 @@ const (
 	SPACE_TYPE_GLOBAL   = "global"
 )
 
-// Content/space status
+// Content status
 const (
-	STATUS_CURRENT  = "current"
-	STATUS_ARCHIVED = "archived"
+	SPACE_STATUS_CURRENT  = "current"
+	SPACE_STATUS_ARCHIVED = "archived"
+)
+
+// Space status
+const (
+	CONTENT_STATUS_CURRENT = "current"
+	CONTENT_STATUS_TRASHED = "trashed"
+	CONTENT_STATUS_DRAFT   = "draft"
 )
 
 // Units
@@ -473,6 +481,68 @@ type Watcher struct {
 	FullName  string `json:"fullName"`
 	Type      string `json:"type"`
 	UserKey   string `json:"userKey"`
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// IsAttachment return true if content is attachment
+func (c *Content) IsAttachment() bool {
+	return c.Type == CONTENT_TYPE_ATTACHMENT
+}
+
+// IsComment return true if content is comment
+func (c *Content) IsComment() bool {
+	return c.Type == CONTENT_TYPE_COMMENT
+}
+
+// IsPage return true if content is page
+func (c *Content) IsPage() bool {
+	return c.Type == CONTENT_TYPE_PAGE
+}
+
+// IsTrashed return true if content is trashed
+func (c *Content) IsTrashed() bool {
+	return c.Status == CONTENT_STATUS_TRASHED
+}
+
+// IsDraft return true if content is draft
+func (c *Content) IsDraft() bool {
+	return c.Status == CONTENT_STATUS_DRAFT
+}
+
+// IsGlobal return true if space is global
+func (s *Space) IsGlobal() bool {
+	return s.Type == SPACE_TYPE_GLOBAL
+}
+
+// IsPersonal return true if space is personal
+func (s *Space) IsPersonal() bool {
+	return s.Type == SPACE_TYPE_PERSONAL
+}
+
+// IsArchived return true if space is archived
+func (s *Space) IsArchived() bool {
+	return s.Type == SPACE_STATUS_ARCHIVED
+}
+
+// Combined return united slice with all watchers
+func (wi *WatchInfo) Combined() []*Watcher {
+	var result []*Watcher
+
+	result = append(result, wi.PageWatchers...)
+
+MAINLOOP:
+	for _, watcher := range wi.SpaceWatchers {
+		for _, pageWatcher := range wi.PageWatchers {
+			if watcher.UserKey == pageWatcher.UserKey {
+				continue MAINLOOP
+			}
+		}
+
+		result = append(result, watcher)
+	}
+
+	return result
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
