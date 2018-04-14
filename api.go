@@ -394,12 +394,14 @@ type SearchResult struct {
 
 // SearchEntity contains search result
 type SearchEntity struct {
-	Content      interface{} `json:"content"`
-	Title        string      `json:"title"`
-	Excerpt      string      `json:"excerpt"`
-	URL          string      `json:"url"`
-	EntityType   string      `json:"entityType"`
-	LastModified *Date       `json:"lastModified"`
+	Content      *Content `json:"content"`
+	Space        *Space   `json:"space"`
+	User         *User    `json:"user"`
+	Title        string   `json:"title"`
+	Excerpt      string   `json:"excerpt"`
+	URL          string   `json:"url"`
+	EntityType   string   `json:"entityType"`
+	LastModified *Date    `json:"lastModified"`
 }
 
 // SPACE ///////////////////////////////////////////////////////////////////////////////
