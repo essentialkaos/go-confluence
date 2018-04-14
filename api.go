@@ -187,6 +187,7 @@ type Content struct {
 	Title       string       `json:"title"`
 	Extensions  *Extensions  `json:"extensions"`
 	Metadata    *Metadata    `json:"metadata"`
+	Container   *Container   `json:"container"`
 	Space       *Space       `json:"space"`
 	Version     *Version     `json:"version"`
 	Operations  []*Operation `json:"operations"`
@@ -287,6 +288,15 @@ type Contributors struct {
 type Publishers struct {
 	Users    []*User  `json:"users"`
 	UserKeys []string `json:"userKeys"`
+}
+
+// Container contains basic container info
+type Container struct {
+	ID    string `json:"id"`
+	Key   string `json:"key"`   // Space
+	Name  string `json:"name"`  // Space
+	Title string `json:"title"` // Page or blogpost
+	Links *Links `json:"_links"`
 }
 
 // LABELS //////////////////////////////////////////////////////////////////////////////

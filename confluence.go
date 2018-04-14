@@ -744,6 +744,13 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ProfileURL return link to profile
+func (api *API) ProfileURL(u *User) string {
+	return api.url + "/display/~" + u.Username
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // codebeat:disable[ARITY]
 
 // doRequest create and execute request
