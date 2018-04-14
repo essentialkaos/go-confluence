@@ -194,6 +194,7 @@ type Content struct {
 	Ancestors   []*Content   `json:"ancestors"`
 	Descendants *Contents    `json:"descendants"`
 	Body        *Body        `json:"body"`
+	Links       *Links       `json:"_links"`
 }
 
 // ContentColletion represents paginated list of content
@@ -398,11 +399,12 @@ type SpaceParameters struct {
 
 // Space contains info about space
 type Space struct {
-	ID   int    `json:"id"`
-	Key  string `json:"key"`
-	Name string `json:"name"`
-	Icon *Icon  `json:"icon"`
-	Type string `json:"type"`
+	ID    int    `json:"id"`
+	Key   string `json:"key"`
+	Name  string `json:"name"`
+	Icon  *Icon  `json:"icon"`
+	Type  string `json:"type"`
+	Links *Links `json:"_links"`
 }
 
 // SpaceCollection contains paginated list of spaces
@@ -447,6 +449,15 @@ type UserCollection struct {
 	Start   int     `json:"start"`
 	Limit   int     `json:"limit"`
 	Size    int     `json:"size"`
+}
+
+// LINKS ///////////////////////////////////////////////////////////////////////////////
+
+// Links contains links
+type Links struct {
+	WebUI  string `json:"webui"`
+	TinyUI string `json:"tinyui"`
+	Base   string `json:"base"`
 }
 
 // WATCH ///////////////////////////////////////////////////////////////////////////////
