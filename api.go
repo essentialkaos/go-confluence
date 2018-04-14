@@ -546,6 +546,16 @@ func (s *Space) IsArchived() bool {
 	return s.Type == SPACE_STATUS_ARCHIVED
 }
 
+// IsPage return true if container is page
+func (c *Container) IsPage() bool {
+	return c.Title != ""
+}
+
+// IsSpace return true if container is space
+func (c *Container) IsSpace() bool {
+	return c.Key != ""
+}
+
 // Combined return united slice with all watchers
 func (wi *WatchInfo) Combined() []*Watcher {
 	var result []*Watcher
