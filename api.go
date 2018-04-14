@@ -169,6 +169,15 @@ type ContentIDParameters struct {
 	Expand  []string `query:"expand"`
 }
 
+// ContentSearchParameters is params for searching content
+type ContentSearchParameters struct {
+	CQL        string   `query:"cql"`
+	CQLContext string   `query:"cqlcontext"`
+	Expand     []string `query:"expand"`
+	Start      int      `query:"start"`
+	Limit      int      `query:"limit"`
+}
+
 // ChildrenParameters is params for fetching content child info
 type ChildrenParameters struct {
 	ParentVersion int      `query:"parentVersion"`
@@ -198,8 +207,8 @@ type Content struct {
 	Links       *Links       `json:"_links"`
 }
 
-// ContentColletion represents paginated list of content
-type ContentColletion struct {
+// ContentCollection represents paginated list of content
+type ContentCollection struct {
 	Results []*Content `json:"results"`
 	Start   int        `json:"start"`
 	Limit   int        `json:"limit"`
@@ -208,10 +217,10 @@ type ContentColletion struct {
 
 // Contents contains all types of content
 type Contents struct {
-	Attachments *ContentColletion `json:"attachment"`
-	Comments    *ContentColletion `json:"comment"`
-	Pages       *ContentColletion `json:"page"`
-	Blogposts   *ContentColletion `json:"blogposts"`
+	Attachments *ContentCollection `json:"attachment"`
+	Comments    *ContentCollection `json:"comment"`
+	Pages       *ContentCollection `json:"page"`
+	Blogposts   *ContentCollection `json:"blogposts"`
 }
 
 // Body contains content data
@@ -385,11 +394,12 @@ type SearchResult struct {
 
 // SearchEntity contains search result
 type SearchEntity struct {
-	Title        string `json:"title"`
-	Excerpt      string `json:"excerpt"`
-	URL          string `json:"url"`
-	EntityType   string `json:"entityType"`
-	LastModified *Date  `json:"lastModified"`
+	Content      interface{} `json:"content"`
+	Title        string      `json:"title"`
+	Excerpt      string      `json:"excerpt"`
+	URL          string      `json:"url"`
+	EntityType   string      `json:"entityType"`
+	LastModified *Date       `json:"lastModified"`
 }
 
 // SPACE ///////////////////////////////////////////////////////////////////////////////
@@ -634,6 +644,11 @@ func (p ContentParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p ContentIDParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p ContentSearchParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 
