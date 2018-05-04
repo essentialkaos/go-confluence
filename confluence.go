@@ -20,15 +20,6 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-const (
-	// NAME is package name
-	NAME = "Go-Confluence"
-	// VERSION is package version
-	VERSION = "1.2.0"
-)
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 // API is Confluence API struct
 type API struct {
 	Client *fasthttp.Client // Client is client for http requests
@@ -151,8 +142,8 @@ func (api *API) GetAuditRetention() (*AuditRetentionInfo, error) {
 
 // GetContent fetch list of Content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getContent
-func (api *API) GetContent(params ContentParameters) (*ContentColletion, error) {
-	result := &ContentColletion{}
+func (api *API) GetContent(params ContentParameters) (*ContentCollection, error) {
+	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/content",
 		params, result, nil,
@@ -243,8 +234,8 @@ func (api *API) GetContentChildren(contentID string, params ChildrenParameters) 
 
 // GetContentChildrenByType the direct children of a piece of Content, limited to a single child type
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-childrenOfType
-func (api *API) GetContentChildrenByType(contentID, contentType string, params ChildrenParameters) (*ContentColletion, error) {
-	result := &ContentColletion{}
+func (api *API) GetContentChildrenByType(contentID, contentType string, params ChildrenParameters) (*ContentCollection, error) {
+	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/content/"+contentID+"/child/"+contentType,
 		params, result, nil,
@@ -266,8 +257,8 @@ func (api *API) GetContentChildrenByType(contentID, contentType string, params C
 
 // GetContentComments fetch the comments of a content
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-commentsOfContent
-func (api *API) GetContentComments(contentID string, params ChildrenParameters) (*ContentColletion, error) {
-	result := &ContentColletion{}
+func (api *API) GetContentComments(contentID string, params ChildrenParameters) (*ContentCollection, error) {
+	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/content/"+contentID+"/child/comment",
 		params, result, nil,
@@ -289,8 +280,8 @@ func (api *API) GetContentComments(contentID string, params ChildrenParameters) 
 
 // GetAttachments fetch list of attachment Content entities within a single container
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child/attachment-getAttachments
-func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*ContentColletion, error) {
-	result := &ContentColletion{}
+func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*ContentCollection, error) {
+	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/content/"+contentID+"/child/attachment",
 		params, result, nil,
@@ -335,8 +326,8 @@ func (api *API) GetDescendants(contentID string, params ExpandParameters) (*Cont
 
 // GetDescendantsOfType fetch the direct descendants of a piece of Content, limited to a single descendant type
 // https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/descendant-descendantsOfType
-func (api *API) GetDescendantsOfType(contentID, descType string, params ExpandParameters) (*ContentColletion, error) {
-	result := &ContentColletion{}
+func (api *API) GetDescendantsOfType(contentID, descType string, params ExpandParameters) (*ContentCollection, error) {
+	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/content/"+contentID+"/descendant/"+descType,
 		params, result, nil,
@@ -490,6 +481,29 @@ func (api *API) Search(params SearchParameters) (*SearchResult, error) {
 	result := &SearchResult{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/search",
+		params, result, nil,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 400:
+		return nil, ErrQueryError
+	case 403:
+		return nil, ErrNoPerms
+	}
+
+	return result, nil
+}
+
+// SearchContent fetch a list of content using the Confluence Query Language (CQL)
+// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-search
+func (api *API) SearchContent(params ContentSearchParameters) (*ContentCollection, error) {
+	result := &ContentCollection{}
+	statusCode, err := api.doRequest(
+		"GET", "/rest/api/content/search",
 		params, result, nil,
 	)
 
@@ -749,6 +763,13 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 	}
 
 	return result, nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// ProfileURL return link to profile
+func (api *API) ProfileURL(u *User) string {
+	return api.url + "/display/~" + u.Username
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

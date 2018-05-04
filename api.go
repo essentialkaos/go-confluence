@@ -169,6 +169,15 @@ type ContentIDParameters struct {
 	Expand  []string `query:"expand"`
 }
 
+// ContentSearchParameters is params for searching content
+type ContentSearchParameters struct {
+	CQL        string   `query:"cql"`
+	CQLContext string   `query:"cqlcontext"`
+	Expand     []string `query:"expand"`
+	Start      int      `query:"start"`
+	Limit      int      `query:"limit"`
+}
+
 // ChildrenParameters is params for fetching content child info
 type ChildrenParameters struct {
 	ParentVersion int      `query:"parentVersion"`
@@ -187,6 +196,7 @@ type Content struct {
 	Title       string       `json:"title"`
 	Extensions  *Extensions  `json:"extensions"`
 	Metadata    *Metadata    `json:"metadata"`
+	Container   *Container   `json:"container"`
 	Space       *Space       `json:"space"`
 	Version     *Version     `json:"version"`
 	Operations  []*Operation `json:"operations"`
@@ -194,10 +204,11 @@ type Content struct {
 	Ancestors   []*Content   `json:"ancestors"`
 	Descendants *Contents    `json:"descendants"`
 	Body        *Body        `json:"body"`
+	Links       *Links       `json:"_links"`
 }
 
-// ContentColletion represents paginated list of content
-type ContentColletion struct {
+// ContentCollection represents paginated list of content
+type ContentCollection struct {
 	Results []*Content `json:"results"`
 	Start   int        `json:"start"`
 	Limit   int        `json:"limit"`
@@ -206,10 +217,10 @@ type ContentColletion struct {
 
 // Contents contains all types of content
 type Contents struct {
-	Attachments *ContentColletion `json:"attachment"`
-	Comments    *ContentColletion `json:"comment"`
-	Pages       *ContentColletion `json:"page"`
-	Blogposts   *ContentColletion `json:"blogposts"`
+	Attachments *ContentCollection `json:"attachment"`
+	Comments    *ContentCollection `json:"comment"`
+	Pages       *ContentCollection `json:"page"`
+	Blogposts   *ContentCollection `json:"blogposts"`
 }
 
 // Body contains content data
@@ -286,6 +297,15 @@ type Contributors struct {
 type Publishers struct {
 	Users    []*User  `json:"users"`
 	UserKeys []string `json:"userKeys"`
+}
+
+// Container contains basic container info
+type Container struct {
+	ID    string `json:"id"`
+	Key   string `json:"key"`   // Space
+	Name  string `json:"name"`  // Space
+	Title string `json:"title"` // Page or blogpost
+	Links *Links `json:"_links"`
 }
 
 // LABELS //////////////////////////////////////////////////////////////////////////////
@@ -374,11 +394,14 @@ type SearchResult struct {
 
 // SearchEntity contains search result
 type SearchEntity struct {
-	Title        string `json:"title"`
-	Excerpt      string `json:"excerpt"`
-	URL          string `json:"url"`
-	EntityType   string `json:"entityType"`
-	LastModified *Date  `json:"lastModified"`
+	Content      *Content `json:"content"`
+	Space        *Space   `json:"space"`
+	User         *User    `json:"user"`
+	Title        string   `json:"title"`
+	Excerpt      string   `json:"excerpt"`
+	URL          string   `json:"url"`
+	EntityType   string   `json:"entityType"`
+	LastModified *Date    `json:"lastModified"`
 }
 
 // SPACE ///////////////////////////////////////////////////////////////////////////////
@@ -398,11 +421,12 @@ type SpaceParameters struct {
 
 // Space contains info about space
 type Space struct {
-	ID   int    `json:"id"`
-	Key  string `json:"key"`
-	Name string `json:"name"`
-	Icon *Icon  `json:"icon"`
-	Type string `json:"type"`
+	ID    int    `json:"id"`
+	Key   string `json:"key"`
+	Name  string `json:"name"`
+	Icon  *Icon  `json:"icon"`
+	Type  string `json:"type"`
+	Links *Links `json:"_links"`
 }
 
 // SpaceCollection contains paginated list of spaces
@@ -447,6 +471,15 @@ type UserCollection struct {
 	Start   int     `json:"start"`
 	Limit   int     `json:"limit"`
 	Size    int     `json:"size"`
+}
+
+// LINKS ///////////////////////////////////////////////////////////////////////////////
+
+// Links contains links
+type Links struct {
+	WebUI  string `json:"webui"`
+	TinyUI string `json:"tinyui"`
+	Base   string `json:"base"`
 }
 
 // WATCH ///////////////////////////////////////////////////////////////////////////////
@@ -523,6 +556,16 @@ func (s *Space) IsPersonal() bool {
 // IsArchived return true if space is archived
 func (s *Space) IsArchived() bool {
 	return s.Type == SPACE_STATUS_ARCHIVED
+}
+
+// IsPage return true if container is page
+func (c *Container) IsPage() bool {
+	return c.Title != ""
+}
+
+// IsSpace return true if container is space
+func (c *Container) IsSpace() bool {
+	return c.Key != ""
 }
 
 // Combined return united slice with all watchers
@@ -603,6 +646,11 @@ func (p ContentParameters) ToQuery() string {
 
 // ToQuery convert params to URL query
 func (p ContentIDParameters) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ToQuery convert params to URL query
+func (p ContentSearchParameters) ToQuery() string {
 	return paramsToQuery(p)
 }
 
