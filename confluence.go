@@ -830,7 +830,7 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 	}
 
 	// Set auth header
-	req.Header.Set("Authorization", "Basic "+api.basicAuth)
+	req.Header.Add("Authorization", "Basic "+api.basicAuth)
 
 	return req
 }

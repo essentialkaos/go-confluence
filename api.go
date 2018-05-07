@@ -75,6 +75,9 @@ type Timestamp struct {
 	time.Time
 }
 
+// ContainerID is container ID
+type ContainerID string
+
 // EmptyParameters is empty parameters
 type EmptyParameters struct {
 	// nothing
@@ -250,7 +253,7 @@ type Version struct {
 
 // Extensions contains info about content extensions
 type Extensions struct {
-	Position   string      `json:"position"`   // Page
+	Position   int         `json:"position"`   // Page
 	MediaType  string      `json:"mediaType"`  // Attachment
 	FileSize   int         `json:"fileSize"`   // Attachment
 	Comment    string      `json:"comment"`    // Attachment
@@ -301,11 +304,11 @@ type Publishers struct {
 
 // Container contains basic container info
 type Container struct {
-	ID    string `json:"id"`
-	Key   string `json:"key"`   // Space
-	Name  string `json:"name"`  // Space
-	Title string `json:"title"` // Page or blogpost
-	Links *Links `json:"_links"`
+	CID   ContainerID `json:"id"`
+	Key   string      `json:"key"`   // Space
+	Name  string      `json:"name"`  // Space
+	Title string      `json:"title"` // Page or blogpost
+	Links *Links      `json:"_links"`
 }
 
 // LABELS //////////////////////////////////////////////////////////////////////////////
@@ -588,6 +591,11 @@ MAINLOOP:
 	return result
 }
 
+// ID return container ID
+func (c *Container) ID() string {
+	return string(c.CID)
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // UnmarshalJSON is custom Date format unmarshaler
@@ -597,6 +605,20 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 	d.Time, err = time.Parse(time.RFC3339, strings.Trim(string(b), "\""))
 
 	return err
+}
+
+// UnmarshalJSON is custom container ID unmarshaler
+func (c *ContainerID) UnmarshalJSON(b []byte) error {
+	switch {
+	case len(b) == 0:
+		// nop
+	case b[0] == '"':
+		*c = ContainerID(strings.Replace(string(b), "\"", "", -1))
+	default:
+		*c = ContainerID(string(b))
+	}
+
+	return nil
 }
 
 // UnmarshalJSON is custom Timestamp format unmarshaler

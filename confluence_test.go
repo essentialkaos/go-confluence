@@ -37,7 +37,7 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 		Expand: []string{"test1,test2"},
 	}
 
-	c.Assert(p.ToQuery(), Equals, "expand=test1,test2")
+	c.Assert(p.ToQuery(), Equals, `expand=test1%2Ctest2`)
 
 	p = SpaceParameters{
 		SpaceKey:  []string{"TS1", "TS2", "TS3"},
