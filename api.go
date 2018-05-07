@@ -8,6 +8,7 @@ package confluence
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -77,6 +78,9 @@ type Timestamp struct {
 
 // ContainerID is container ID
 type ContainerID string
+
+// ExtensionPosition is extension position
+type ExtensionPosition int
 
 // EmptyParameters is empty parameters
 type EmptyParameters struct {
@@ -253,12 +257,12 @@ type Version struct {
 
 // Extensions contains info about content extensions
 type Extensions struct {
-	Position   int         `json:"position"`   // Page
-	MediaType  string      `json:"mediaType"`  // Attachment
-	FileSize   int         `json:"fileSize"`   // Attachment
-	Comment    string      `json:"comment"`    // Attachment
-	Location   string      `json:"location"`   // Comment
-	Resolution *Resolution `json:"resolution"` // Comment
+	Position   ExtensionPosition `json:"position"`   // Page
+	MediaType  string            `json:"mediaType"`  // Attachment
+	FileSize   int               `json:"fileSize"`   // Attachment
+	Comment    string            `json:"comment"`    // Attachment
+	Location   string            `json:"location"`   // Comment
+	Resolution *Resolution       `json:"resolution"` // Comment
 }
 
 // Resolution contains resolution info
@@ -304,7 +308,7 @@ type Publishers struct {
 
 // Container contains basic container info
 type Container struct {
-	CID   ContainerID `json:"id"`
+	ID    ContainerID `json:"id"`
 	Key   string      `json:"key"`   // Space
 	Name  string      `json:"name"`  // Space
 	Title string      `json:"title"` // Page or blogpost
@@ -591,11 +595,6 @@ MAINLOOP:
 	return result
 }
 
-// ID return container ID
-func (c *Container) ID() string {
-	return string(c.CID)
-}
-
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // UnmarshalJSON is custom Date format unmarshaler
@@ -604,7 +603,11 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 
 	d.Time, err = time.Parse(time.RFC3339, strings.Trim(string(b), "\""))
 
-	return err
+	if err != nil {
+		return fmt.Errorf("Cannot unmarshal Date value: %v", err)
+	}
+
+	return nil
 }
 
 // UnmarshalJSON is custom container ID unmarshaler
@@ -621,6 +624,24 @@ func (c *ContainerID) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// UnmarshalJSON is custom position unmarshaler
+func (ep *ExtensionPosition) UnmarshalJSON(b []byte) error {
+	if string(b) == "none" {
+		*ep = -1
+		return nil
+	}
+
+	v, err := strconv.Atoi(string(b))
+
+	if err != nil {
+		return fmt.Errorf("Cannot unmarshal ExtensionPosition value: %v", err)
+	}
+
+	*ep = ExtensionPosition(v)
+
+	return nil
+}
+
 // UnmarshalJSON is custom Timestamp format unmarshaler
 func (d *Timestamp) UnmarshalJSON(b []byte) error {
 	ts, err := strconv.ParseInt(string(b), 10, 64)
@@ -631,7 +652,11 @@ func (d *Timestamp) UnmarshalJSON(b []byte) error {
 
 	d.Time = time.Unix(ts/1000, (ts%1000)*1000000)
 
-	return err
+	if err != nil {
+		return fmt.Errorf("Cannot unmarshal Timestamp value: %v", err)
+	}
+
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
