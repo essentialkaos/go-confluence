@@ -9,6 +9,7 @@ package confluence
 
 import (
 	"fmt"
+	"net/url"
 	"reflect"
 	"strings"
 	"time"
@@ -30,7 +31,7 @@ func paramsToQuery(params interface{}) string {
 		switch value.Type().String() {
 		case "string":
 			if value.String() != "" {
-				result += field.Tag.Get("query") + "=" + value.String() + "&"
+				result += field.Tag.Get("query") + "=" + esc(value.String()) + "&"
 			}
 
 		case "int":
@@ -77,9 +78,9 @@ func formatSlice(tag string, s reflect.Value) string {
 		v := s.Index(i)
 
 		if unwrap {
-			result += name + "=" + v.String() + "&"
+			result += name + "=" + esc(v.String()) + "&"
 		} else {
-			result += v.String() + ","
+			result += esc(v.String()) + ","
 		}
 	}
 
@@ -93,4 +94,9 @@ func parseSliceTag(tag string) (string, bool) {
 	}
 
 	return tag[:strings.Index(tag, ",")], true
+}
+
+// esc escapes the string so it can be safely placed inside a URL query
+func esc(s string) string {
+	return url.QueryEscape(s)
 }
