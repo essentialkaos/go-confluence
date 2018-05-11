@@ -48,17 +48,27 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 }
 
 func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
-	d := &Date{}
-	d.UnmarshalJSON([]byte("\"2013-03-12T10:36:12.602+04:00\""))
+	var err error
 
+	d := &Date{}
+	err = d.UnmarshalJSON([]byte("\"2013-03-12T10:36:12.602+04:00\""))
+
+	c.Assert(err, IsNil)
 	c.Assert(d.Year(), Equals, 2013)
 	c.Assert(d.Month(), Equals, time.Month(3))
 	c.Assert(d.Day(), Equals, 12)
 
 	t := &Timestamp{}
-	t.UnmarshalJSON([]byte("1523059214803"))
+	err = t.UnmarshalJSON([]byte("1523059214803"))
 
+	c.Assert(err, IsNil)
 	c.Assert(t.Year(), Equals, 2018)
 	c.Assert(t.Month(), Equals, time.Month(4))
 	c.Assert(t.Day(), Equals, 7)
+
+	var e ExtensionPosition
+	err = e.UnmarshalJSON([]byte("\"none\""))
+
+	c.Assert(err, IsNil)
+	c.Assert(e, Equals, ExtensionPosition(-1))
 }

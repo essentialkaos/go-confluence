@@ -626,8 +626,8 @@ func (c *ContainerID) UnmarshalJSON(b []byte) error {
 
 // UnmarshalJSON is custom position unmarshaler
 func (ep *ExtensionPosition) UnmarshalJSON(b []byte) error {
-	if string(b) == "none" {
-		*ep = -1
+	if string(b) == "\"none\"" {
+		*ep = ExtensionPosition(-1)
 		return nil
 	}
 
