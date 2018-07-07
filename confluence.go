@@ -857,5 +857,4 @@ func getUserAgent(app, version string) string {
 // genBasicAuthHeader generate basic auth header
 func genBasicAuthHeader(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(username + ":" + password))
-
 }
