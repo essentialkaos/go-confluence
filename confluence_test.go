@@ -51,7 +51,7 @@ func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
 	var err error
 
 	d := &Date{}
-	err = d.UnmarshalJSON([]byte(`\"2013-03-12T10:36:12.602+04:00\"`))
+	err = d.UnmarshalJSON([]byte(`"2013-03-12T10:36:12.602+04:00"`))
 
 	c.Assert(err, IsNil)
 	c.Assert(d.Year(), Equals, 2013)
