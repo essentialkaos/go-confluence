@@ -137,35 +137,3 @@ func getTagName(tag string) string {
 func esc(s string) string {
 	return url.QueryEscape(s)
 }
-
-// readField read field from given data
-func readField(data string, index int, separator rune) string {
-	if data == "" || index < 0 {
-		return ""
-	}
-
-	curIndex, startPointer := -1, -1
-
-	for i, r := range data {
-		if r == separator {
-			if curIndex == index {
-				return data[startPointer:i]
-			}
-
-			startPointer = i + 1
-			curIndex++
-			continue
-		}
-
-		if startPointer == -1 {
-			startPointer = i
-			curIndex++
-		}
-	}
-
-	if index > curIndex {
-		return ""
-	}
-
-	return data[startPointer:]
-}
