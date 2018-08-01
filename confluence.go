@@ -91,11 +91,13 @@ func (api *API) GetAuditRecords(params AuditParameters) (*AuditRecordCollection,
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetAuditRecordsSince fetch a list of AuditRecord instances dating back to a certain time
@@ -112,11 +114,13 @@ func (api *API) GetAuditRecordsSince(params AuditSinceParameters) (*AuditRecordC
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetAuditRetention fetch the current retention period
@@ -133,11 +137,13 @@ func (api *API) GetAuditRetention() (*AuditRetentionInfo, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetContent fetch list of Content
@@ -154,13 +160,15 @@ func (api *API) GetContent(params ContentParameters) (*ContentCollection, error)
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetContentByID fetch a piece of Content
@@ -177,13 +185,15 @@ func (api *API) GetContentByID(contentID string, params ContentIDParameters) (*C
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetContentHistory fetch the history of a particular piece of content
@@ -200,13 +210,15 @@ func (api *API) GetContentHistory(contentID string, params ExpandParameters) (*H
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetContentChildren fetch a map of the direct children of a piece of Content
@@ -223,13 +235,15 @@ func (api *API) GetContentChildren(contentID string, params ChildrenParameters) 
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetContentChildrenByType the direct children of a piece of Content, limited to a single child type
@@ -246,13 +260,15 @@ func (api *API) GetContentChildrenByType(contentID, contentType string, params C
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetContentComments fetch the comments of a content
@@ -269,13 +285,15 @@ func (api *API) GetContentComments(contentID string, params ChildrenParameters) 
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetAttachments fetch list of attachment Content entities within a single container
@@ -292,13 +310,15 @@ func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetDescendants fetch a map of the descendants of a piece of Content
@@ -315,13 +335,15 @@ func (api *API) GetDescendants(contentID string, params ExpandParameters) (*Cont
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetDescendantsOfType fetch the direct descendants of a piece of Content, limited to a single descendant type
@@ -338,13 +360,15 @@ func (api *API) GetDescendantsOfType(contentID, descType string, params ExpandPa
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetLabels fetch the list of labels on a piece of Content
@@ -361,13 +385,15 @@ func (api *API) GetLabels(contentID string, params LabelParameters) (*LabelColle
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetRestrictionsByOperation fetch info about all restrictions by operation
@@ -384,11 +410,13 @@ func (api *API) GetRestrictionsByOperation(contentID string, params ExpandParame
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetRestrictionsForOperation fetch info about all restrictions of given operation
@@ -405,11 +433,13 @@ func (api *API) GetRestrictionsForOperation(contentID, operation string, params 
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetGroups fetch collection of user groups
@@ -426,11 +456,13 @@ func (api *API) GetGroups(params CollectionParameters) (*GroupCollection, error)
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetGroup fetch the user group with the group name
@@ -447,11 +479,13 @@ func (api *API) GetGroup(groupName string, params ExpandParameters) (*Group, err
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetGroupMembers fetch a collection of users in the given group
@@ -468,11 +502,13 @@ func (api *API) GetGroupMembers(groupName string, params CollectionParameters) (
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // Search search for entities in Confluence using the Confluence Query Language (CQL)
@@ -489,13 +525,15 @@ func (api *API) Search(params SearchParameters) (*SearchResult, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 400:
 		return nil, ErrQueryError
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // SearchContent fetch a list of content using the Confluence Query Language (CQL)
@@ -512,13 +550,15 @@ func (api *API) SearchContent(params ContentSearchParameters) (*ContentCollectio
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 400:
 		return nil, ErrQueryError
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetSpaces fetch information about a number of spaces
@@ -535,11 +575,13 @@ func (api *API) GetSpaces(params SpaceParameters) (*SpaceCollection, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetSpace fetch information about a space
@@ -556,13 +598,15 @@ func (api *API) GetSpace(spaceKey string, params Parameters) (*Space, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoSpace
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetSpaceContent fetch the content in this given space
@@ -579,13 +623,15 @@ func (api *API) GetSpaceContent(spaceKey string, params SpaceParameters) (*Conte
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetSpaceContentWithType fetch the content in this given space with the given type
@@ -602,13 +648,15 @@ func (api *API) GetSpaceContentWithType(spaceKey, contentType string, params Spa
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetUser fetch information about a user identified by either user key or username
@@ -625,13 +673,15 @@ func (api *API) GetUser(params UserParameters) (*User, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoUserPerms
 	case 404:
 		return nil, ErrNoUserFound
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetAnonymousUser fetch information about the how anonymous is represented in confluence
@@ -648,11 +698,13 @@ func (api *API) GetAnonymousUser() (*User, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetCurrentUser fetch information about the current logged in user
@@ -669,11 +721,13 @@ func (api *API) GetCurrentUser(params ExpandParameters) (*User, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // GetUserGroups fetch collection of groups that the given user is a member of
@@ -690,11 +744,13 @@ func (api *API) GetUserGroups(params UserParameters) (*GroupCollection, error) {
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // IsWatchingContent fetch information about whether a user is watching a specified content
@@ -711,13 +767,15 @@ func (api *API) IsWatchingContent(contentID string, params WatchParameters) (*Wa
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // IsWatchingSpace fetch information about whether a user is watching a specified space
@@ -734,13 +792,15 @@ func (api *API) IsWatchingSpace(spaceKey string, params WatchParameters) (*Watch
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoSpace
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // ListWatchers fetch information about all watcher of given page
@@ -756,13 +816,15 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 	}
 
 	switch statusCode {
+	case 200:
+		return result, nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
 		return nil, ErrNoSpace
+	default:
+		return nil, makeUnknownError(statusCode)
 	}
-
-	return result, nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -857,4 +919,9 @@ func getUserAgent(app, version string) string {
 // genBasicAuthHeader generate basic auth header
 func genBasicAuthHeader(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(username + ":" + password))
+}
+
+// makeUnknownError create error struct for unknown error
+func makeUnknownError(statusCode int) error {
+	return fmt.Errorf("Unknown error occurred (status code %d)", statusCode)
 }

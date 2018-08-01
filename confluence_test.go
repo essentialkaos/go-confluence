@@ -44,14 +44,14 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 		Favourite: true,
 	}
 
-	c.Assert(p.ToQuery(), Equals, "spaceKey=TS1&spaceKey=TS2&spaceKey=TS3&favourite=1")
+	c.Assert(p.ToQuery(), Equals, "spaceKey=TS1&spaceKey=TS2&spaceKey=TS3&favourite=true")
 }
 
 func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
 	var err error
 
 	d := &Date{}
-	err = d.UnmarshalJSON([]byte("\"2013-03-12T10:36:12.602+04:00\""))
+	err = d.UnmarshalJSON([]byte(`"2013-03-12T10:36:12.602+04:00"`))
 
 	c.Assert(err, IsNil)
 	c.Assert(d.Year(), Equals, 2013)
@@ -67,7 +67,7 @@ func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
 	c.Assert(t.Day(), Equals, 7)
 
 	var e ExtensionPosition
-	err = e.UnmarshalJSON([]byte("\"none\""))
+	err = e.UnmarshalJSON([]byte(`"none"`))
 
 	c.Assert(err, IsNil)
 	c.Assert(e, Equals, ExtensionPosition(-1))
