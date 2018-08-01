@@ -12,7 +12,7 @@ const (
 	NAME = "Go-Confluence"
 
 	// VERSION is package version
-	VERSION = "1.5.1"
+	VERSION = "1.6.0"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

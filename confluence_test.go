@@ -44,7 +44,7 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 		Favourite: true,
 	}
 
-	c.Assert(p.ToQuery(), Equals, "spaceKey=TS1&spaceKey=TS2&spaceKey=TS3&favourite=1")
+	c.Assert(p.ToQuery(), Equals, "spaceKey=TS1&spaceKey=TS2&spaceKey=TS3&favourite=true")
 }
 
 func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
