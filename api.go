@@ -466,8 +466,8 @@ type UserParameters struct {
 // User contains user info
 type User struct {
 	Type           string `json:"type"`
-	Username       string `json:"username"`
-	UserKey        string `json:"userKey"`
+	Name           string `json:"username"`
+	Key            string `json:"userKey"`
 	ProfilePicture *Icon  `json:"profilePicture"`
 	DisplayName    string `json:"displayName"`
 }
@@ -516,11 +516,11 @@ type WatchInfo struct {
 
 // Watcher contains watcher info
 type Watcher struct {
-	AvatarURL string `json:"avatarUrl"`
-	Name      string `json:"name"`
-	FullName  string `json:"fullName"`
-	Type      string `json:"type"`
-	UserKey   string `json:"userKey"`
+	AvatarURL   string `json:"avatarUrl"`
+	Name        string `json:"name"`
+	Key         string `json:"userKey"`
+	DisplayName string `json:"fullName"`
+	Type        string `json:"type"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -584,7 +584,7 @@ func (wi *WatchInfo) Combined() []*Watcher {
 MAINLOOP:
 	for _, watcher := range wi.SpaceWatchers {
 		for _, pageWatcher := range wi.PageWatchers {
-			if watcher.UserKey == pageWatcher.UserKey {
+			if watcher.Key == pageWatcher.Key {
 				continue MAINLOOP
 			}
 		}
