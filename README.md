@@ -3,7 +3,7 @@
 <p align="center"><a href="#installation">Installation</a> • <a href="#usage-example">Usage example</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
 
 <p align="center">
-  <a href="https://godoc.org/pkg.re/essentialkaos/go-confluence.v1"><img src="https://godoc.org/pkg.re/essentialkaos/go-confluence.v1?status.svg"></a>
+  <a href="https://godoc.org/pkg.re/essentialkaos/go-confluence.v2"><img src="https://godoc.org/pkg.re/essentialkaos/go-confluence.v2?status.svg"></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/go-confluence"><img src="https://goreportcard.com/badge/github.com/essentialkaos/go-confluence"></a>
   <a href="https://travis-ci.org/essentialkaos/go-confluence"><img src="https://travis-ci.org/essentialkaos/go-confluence.svg"></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-go-confluence-master"><img alt="codebeat badge" src="https://codebeat.co/badges/c367cff1-4b71-43de-9a47-9fb34e8c34df" /></a>
@@ -25,13 +25,13 @@ git config --global http.https://pkg.re.followRedirects true
 Make sure you have a working Go 1.9+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ````
-go get pkg.re/essentialkaos/go-confluence.v1
+go get pkg.re/essentialkaos/go-confluence.v2
 ````
 
 For update to latest stable release, do:
 
 ```
-go get -u pkg.re/essentialkaos/go-confluence.v1
+go get -u pkg.re/essentialkaos/go-confluence.v2
 ```
 
 ### Usage example
@@ -41,7 +41,7 @@ package main
 
 import (
   "fmt"
-  cf "pkg.re/essentialkaos/go-confluence.v1"
+  cf "pkg.re/essentialkaos/go-confluence.v2"
 )
 
 func main() {
