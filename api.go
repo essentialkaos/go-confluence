@@ -415,15 +415,15 @@ type SearchEntity struct {
 
 // SpaceParameters is params for fetching info about space
 type SpaceParameters struct {
-	SpaceKey    []string `query:"spaceKey,unwrap"`
-	Type        string   `query:"type"`
-	Status      string   `query:"status"`
-	Label       string   `query:"label"`
-	IsFavourite bool     `query:"favourite"`
-	Depth       string   `query:"depth"`
-	Expand      []string `query:"expand"`
-	Start       int      `query:"start"`
-	Limit       int      `query:"limit"`
+	SpaceKey  []string `query:"spaceKey,unwrap"`
+	Type      string   `query:"type"`
+	Status    string   `query:"status"`
+	Label     string   `query:"label"`
+	Favourite bool     `query:"favourite"`
+	Depth     string   `query:"depth"`
+	Expand    []string `query:"expand"`
+	Start     int      `query:"start"`
+	Limit     int      `query:"limit"`
 }
 
 // Space contains info about space
