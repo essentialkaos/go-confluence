@@ -15,7 +15,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/erikdubbelboer/fasthttp"
+	"pkg.re/valyala/fasthttp.v1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

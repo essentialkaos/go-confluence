@@ -127,7 +127,7 @@ type AuditRecord struct {
 	Summary       string     `json:"summary"`
 	Description   string     `json:"description"`
 	Category      string     `json:"category"`
-	SysAdmin      bool       `json:"sysAdmin"`
+	IsSysAdmin    bool       `json:"sysAdmin"`
 }
 
 // AuditRecordCollection contains paginated list of audit record
@@ -246,13 +246,13 @@ type View struct {
 
 // Version contains info about content version
 type Version struct {
-	By        *User    `json:"by"`
-	When      *Date    `json:"when"`
-	Message   string   `json:"message"`
-	Number    int      `json:"number"`
-	MinorEdit bool     `json:"minorEdit"`
-	Hidden    bool     `json:"hidden"`
-	Content   *Content `json:"content"`
+	By          *User    `json:"by"`
+	When        *Date    `json:"when"`
+	Message     string   `json:"message"`
+	Number      int      `json:"number"`
+	IsMinorEdit bool     `json:"minorEdit"`
+	IsHidden    bool     `json:"hidden"`
+	Content     *Content `json:"content"`
 }
 
 // Extensions contains info about content extensions
@@ -286,7 +286,7 @@ type Metadata struct {
 
 // History contains info about content history
 type History struct {
-	Latest          bool          `json:"latest"`
+	IsLatest        bool          `json:"latest"`
 	CreatedBy       *User         `json:"createdBy"`
 	CreatedDate     *Date         `json:"createdDate"`
 	LastUpdated     *Version      `json:"lastUpdated"`
@@ -415,15 +415,15 @@ type SearchEntity struct {
 
 // SpaceParameters is params for fetching info about space
 type SpaceParameters struct {
-	SpaceKey  []string `query:"spaceKey,unwrap"`
-	Type      string   `query:"type"`
-	Status    string   `query:"status"`
-	Label     string   `query:"label"`
-	Favourite bool     `query:"favourite"`
-	Depth     string   `query:"depth"`
-	Expand    []string `query:"expand"`
-	Start     int      `query:"start"`
-	Limit     int      `query:"limit"`
+	SpaceKey    []string `query:"spaceKey,unwrap"`
+	Type        string   `query:"type"`
+	Status      string   `query:"status"`
+	Label       string   `query:"label"`
+	IsFavourite bool     `query:"favourite"`
+	Depth       string   `query:"depth"`
+	Expand      []string `query:"expand"`
+	Start       int      `query:"start"`
+	Limit       int      `query:"limit"`
 }
 
 // Space contains info about space
@@ -505,7 +505,7 @@ type ListWatchersParameters struct {
 
 // WatchStatus contains watching status
 type WatchStatus struct {
-	Watching bool `json:"watching"`
+	IsWatching bool `json:"watching"`
 }
 
 // WatchInfo contains info about watchers
