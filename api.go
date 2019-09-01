@@ -59,6 +59,12 @@ const (
 	UNITS_YEARS   = "years"
 )
 
+// Operations types
+const (
+	OPERATION_READ   = "read"
+	OPERATION_UPDATE = "update"
+)
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // Parameters is interface for params structs

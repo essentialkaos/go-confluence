@@ -30,6 +30,19 @@ type API struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type restrictionsInfo struct {
+	Permissions []permission                    `json:"permissions"`
+	Users       map[string]*restrictionUserInfo `json:"users"`
+}
+
+type restrictionUserInfo struct {
+	User *Watcher `json:"entity"`
+}
+
+type permission []string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // API errors
 var (
 	ErrInitEmptyURL      = errors.New("URL can't be empty")
@@ -42,6 +55,8 @@ var (
 	ErrNoUserPerms       = errors.New("User does not have permission to view users")
 	ErrNoUserFound       = errors.New("User with the given username or userkey does not exist")
 )
+
+var emptyParams = EmptyParameters{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -129,7 +144,7 @@ func (api *API) GetAuditRetention() (*AuditRetentionInfo, error) {
 	result := &AuditRetentionInfo{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/audit/retention",
-		EmptyParameters{}, result, nil,
+		emptyParams, result, nil,
 	)
 
 	if err != nil {
@@ -387,6 +402,33 @@ func (api *API) GetLabels(contentID string, params LabelParameters) (*LabelColle
 	switch statusCode {
 	case 200:
 		return result, nil
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
+// GetRestrictions returns restrictions for the content with permissions inheritance.
+// Confluence API doesn't provide such an API method, so we use private JSON API.
+func (api *API) GetRestrictions(contentID, parentPageId, spaceKey string) (*Restrictions, error) {
+	url := "/pages/getcontentpermissions.action"
+	url += "?contentId=" + contentID
+	url += "&parentPageId=" + parentPageId
+	url += "&spaceKey=" + spaceKey
+
+	result := &restrictionsInfo{}
+	statusCode, err := api.doRequest("GET", url, emptyParams, result, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return convertRestrictionsData(result), nil
 	case 403:
 		return nil, ErrNoPerms
 	case 404:
@@ -690,7 +732,7 @@ func (api *API) GetAnonymousUser() (*User, error) {
 	result := &User{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/user/anonymous",
-		EmptyParameters{}, result, nil,
+		emptyParams, result, nil,
 	)
 
 	if err != nil {
@@ -924,4 +966,86 @@ func genBasicAuthHeader(username, password string) string {
 // makeUnknownError create error struct for unknown error
 func makeUnknownError(statusCode int) error {
 	return fmt.Errorf("Unknown error occurred (status code %d)", statusCode)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// convertRestrictionsData converts restrctions data from private to public format
+func convertRestrictionsData(data *restrictionsInfo) *Restrictions {
+	result := &Restrictions{}
+
+	if data == nil {
+		return result
+	}
+
+	var restr *RestrictionData
+
+	for _, perm := range data.Permissions {
+		if len(perm) != 5 {
+			continue
+		}
+
+		pType, pCategory, pTarget := perm[0], perm[1], perm[2]
+
+		switch pType {
+		case "View":
+			if result.Read == nil {
+				result.Read = &Restriction{OPERATION_READ, &RestrictionData{}}
+			}
+
+			restr = result.Read.Data
+
+		case "Edit":
+			if result.Update == nil {
+				result.Update = &Restriction{OPERATION_UPDATE, &RestrictionData{}}
+			}
+
+			restr = result.Update.Data
+		}
+
+		switch pCategory {
+		case "group":
+			if restr.Group == nil {
+				restr.Group = &GroupCollection{}
+			}
+
+			restr.Group.Size++
+			restr.Group.Limit++
+			restr.Group.Results = append(restr.Group.Results, &Group{"group", pTarget})
+
+		case "user":
+			if restr.User == nil {
+				restr.User = &UserCollection{}
+			}
+
+			restr.User.Size++
+			restr.User.Limit++
+			restr.User.Results = append(
+				restr.User.Results,
+				convertWatcherToUser(data.Users[pTarget].User),
+			)
+		}
+	}
+
+	return result
+}
+
+// convertWatcherToUser converts watcher struct to user struct
+func convertWatcherToUser(w *Watcher) *User {
+	if w == nil {
+		return nil
+	}
+
+	return &User{
+		Type:        w.Type,
+		Name:        w.Name,
+		Key:         w.Key,
+		DisplayName: w.DisplayName,
+		ProfilePicture: &Icon{
+			Path:      w.AvatarURL,
+			Width:     48,
+			Height:    48,
+			IsDefault: false,
+		},
+	}
 }
