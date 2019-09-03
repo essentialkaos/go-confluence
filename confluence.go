@@ -898,8 +898,6 @@ func (api *API) GenTinyLink(contentID string) string {
 			tinyID += "-"
 		case '+':
 			tinyID += "_"
-		case '\n':
-			tinyID += "/"
 		default:
 			tinyID += string(r)
 		}

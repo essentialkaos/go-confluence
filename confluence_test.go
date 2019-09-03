@@ -47,6 +47,14 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 	c.Assert(p.ToQuery(), Equals, "spaceKey=TS1&spaceKey=TS2&spaceKey=TS3&favourite=true")
 }
 
+func (s *ConfluenceSuite) TestTinyLinkGeneration(c *C) {
+	api, _ := NewAPI("https://confl.domain.com", "user", "pass")
+
+	c.Assert(api.GenTinyLink("1477502"), Equals, "https://confl.domain.com/x/fosW")
+	c.Assert(api.GenTinyLink("1477627"), Equals, "https://confl.domain.com/x/_4sW")
+	c.Assert(api.GenTinyLink("40643836"), Equals, "https://confl.domain.com/x/-CxsAg")
+}
+
 func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
 	var err error
 
