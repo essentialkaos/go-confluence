@@ -2,17 +2,20 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2019 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
 	"encoding/base64"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -30,6 +33,19 @@ type API struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type restrictionsInfo struct {
+	Permissions []permission                    `json:"permissions"`
+	Users       map[string]*restrictionUserInfo `json:"users"`
+}
+
+type restrictionUserInfo struct {
+	User *Watcher `json:"entity"`
+}
+
+type permission []string
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // API errors
 var (
 	ErrInitEmptyURL      = errors.New("URL can't be empty")
@@ -42,6 +58,8 @@ var (
 	ErrNoUserPerms       = errors.New("User does not have permission to view users")
 	ErrNoUserFound       = errors.New("User with the given username or userkey does not exist")
 )
+
+var emptyParams = EmptyParameters{}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -78,7 +96,7 @@ func (api *API) SetUserAgent(app, version string) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetAuditRecords fetch a list of AuditRecord instances dating back to a certain time
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#audit-getAuditRecords
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#audit-getAuditRecords
 func (api *API) GetAuditRecords(params AuditParameters) (*AuditRecordCollection, error) {
 	result := &AuditRecordCollection{}
 	statusCode, err := api.doRequest(
@@ -101,7 +119,7 @@ func (api *API) GetAuditRecords(params AuditParameters) (*AuditRecordCollection,
 }
 
 // GetAuditRecordsSince fetch a list of AuditRecord instances dating back to a certain time
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#audit-getAuditRecords
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#audit-getAuditRecords
 func (api *API) GetAuditRecordsSince(params AuditSinceParameters) (*AuditRecordCollection, error) {
 	result := &AuditRecordCollection{}
 	statusCode, err := api.doRequest(
@@ -124,12 +142,12 @@ func (api *API) GetAuditRecordsSince(params AuditSinceParameters) (*AuditRecordC
 }
 
 // GetAuditRetention fetch the current retention period
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#audit-getRetentionPeriod
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#audit-getRetentionPeriod
 func (api *API) GetAuditRetention() (*AuditRetentionInfo, error) {
 	result := &AuditRetentionInfo{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/audit/retention",
-		EmptyParameters{}, result, nil,
+		emptyParams, result, nil,
 	)
 
 	if err != nil {
@@ -147,7 +165,7 @@ func (api *API) GetAuditRetention() (*AuditRetentionInfo, error) {
 }
 
 // GetContent fetch list of Content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getContent
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content-getContent
 func (api *API) GetContent(params ContentParameters) (*ContentCollection, error) {
 	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
@@ -172,7 +190,7 @@ func (api *API) GetContent(params ContentParameters) (*ContentCollection, error)
 }
 
 // GetContentByID fetch a piece of Content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getContentById
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content-getContentById
 func (api *API) GetContentByID(contentID string, params ContentIDParameters) (*Content, error) {
 	result := &Content{}
 	statusCode, err := api.doRequest(
@@ -197,7 +215,7 @@ func (api *API) GetContentByID(contentID string, params ContentIDParameters) (*C
 }
 
 // GetContentHistory fetch the history of a particular piece of content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-getHistory
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content-getHistory
 func (api *API) GetContentHistory(contentID string, params ExpandParameters) (*History, error) {
 	result := &History{}
 	statusCode, err := api.doRequest(
@@ -222,7 +240,7 @@ func (api *API) GetContentHistory(contentID string, params ExpandParameters) (*H
 }
 
 // GetContentChildren fetch a map of the direct children of a piece of Content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-children
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/child-children
 func (api *API) GetContentChildren(contentID string, params ChildrenParameters) (*Contents, error) {
 	result := &Contents{}
 	statusCode, err := api.doRequest(
@@ -247,7 +265,7 @@ func (api *API) GetContentChildren(contentID string, params ChildrenParameters) 
 }
 
 // GetContentChildrenByType the direct children of a piece of Content, limited to a single child type
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-childrenOfType
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/child-childrenOfType
 func (api *API) GetContentChildrenByType(contentID, contentType string, params ChildrenParameters) (*ContentCollection, error) {
 	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
@@ -272,7 +290,7 @@ func (api *API) GetContentChildrenByType(contentID, contentType string, params C
 }
 
 // GetContentComments fetch the comments of a content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child-commentsOfContent
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/child-commentsOfContent
 func (api *API) GetContentComments(contentID string, params ChildrenParameters) (*ContentCollection, error) {
 	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
@@ -297,7 +315,7 @@ func (api *API) GetContentComments(contentID string, params ChildrenParameters) 
 }
 
 // GetAttachments fetch list of attachment Content entities within a single container
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/child/attachment-getAttachments
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/child/attachment-getAttachments
 func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*ContentCollection, error) {
 	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
@@ -322,7 +340,7 @@ func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*
 }
 
 // GetDescendants fetch a map of the descendants of a piece of Content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/descendant-descendants
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/descendant-descendants
 func (api *API) GetDescendants(contentID string, params ExpandParameters) (*Contents, error) {
 	result := &Contents{}
 	statusCode, err := api.doRequest(
@@ -347,7 +365,7 @@ func (api *API) GetDescendants(contentID string, params ExpandParameters) (*Cont
 }
 
 // GetDescendantsOfType fetch the direct descendants of a piece of Content, limited to a single descendant type
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/descendant-descendantsOfType
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/descendant-descendantsOfType
 func (api *API) GetDescendantsOfType(contentID, descType string, params ExpandParameters) (*ContentCollection, error) {
 	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
@@ -372,7 +390,7 @@ func (api *API) GetDescendantsOfType(contentID, descType string, params ExpandPa
 }
 
 // GetLabels fetch the list of labels on a piece of Content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/label-labels
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/label-labels
 func (api *API) GetLabels(contentID string, params LabelParameters) (*LabelCollection, error) {
 	result := &LabelCollection{}
 	statusCode, err := api.doRequest(
@@ -396,8 +414,35 @@ func (api *API) GetLabels(contentID string, params LabelParameters) (*LabelColle
 	}
 }
 
+// GetRestrictions returns restrictions for the content with permissions inheritance.
+// Confluence API doesn't provide such an API method, so we use private JSON API.
+func (api *API) GetRestrictions(contentID, parentPageId, spaceKey string) (*Restrictions, error) {
+	url := "/pages/getcontentpermissions.action"
+	url += "?contentId=" + contentID
+	url += "&parentPageId=" + parentPageId
+	url += "&spaceKey=" + spaceKey
+
+	result := &restrictionsInfo{}
+	statusCode, err := api.doRequest("GET", url, emptyParams, result, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch statusCode {
+	case 200:
+		return convertRestrictionsData(result), nil
+	case 403:
+		return nil, ErrNoPerms
+	case 404:
+		return nil, ErrNoContent
+	default:
+		return nil, makeUnknownError(statusCode)
+	}
+}
+
 // GetRestrictionsByOperation fetch info about all restrictions by operation
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/restriction-byOperation
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/restriction-byOperation
 func (api *API) GetRestrictionsByOperation(contentID string, params ExpandParameters) (*Restrictions, error) {
 	result := &Restrictions{}
 	statusCode, err := api.doRequest(
@@ -420,7 +465,7 @@ func (api *API) GetRestrictionsByOperation(contentID string, params ExpandParame
 }
 
 // GetRestrictionsForOperation fetch info about all restrictions of given operation
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content/{id}/restriction-forOperation
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content/{id}/restriction-forOperation
 func (api *API) GetRestrictionsForOperation(contentID, operation string, params CollectionParameters) (*Restriction, error) {
 	result := &Restriction{}
 	statusCode, err := api.doRequest(
@@ -443,7 +488,7 @@ func (api *API) GetRestrictionsForOperation(contentID, operation string, params 
 }
 
 // GetGroups fetch collection of user groups
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#group-getGroups
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#group-getGroups
 func (api *API) GetGroups(params CollectionParameters) (*GroupCollection, error) {
 	result := &GroupCollection{}
 	statusCode, err := api.doRequest(
@@ -466,7 +511,7 @@ func (api *API) GetGroups(params CollectionParameters) (*GroupCollection, error)
 }
 
 // GetGroup fetch the user group with the group name
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#group-getGroup
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#group-getGroup
 func (api *API) GetGroup(groupName string, params ExpandParameters) (*Group, error) {
 	result := &Group{}
 	statusCode, err := api.doRequest(
@@ -489,7 +534,7 @@ func (api *API) GetGroup(groupName string, params ExpandParameters) (*Group, err
 }
 
 // GetGroupMembers fetch a collection of users in the given group
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#group-getMembers
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#group-getMembers
 func (api *API) GetGroupMembers(groupName string, params CollectionParameters) (*UserCollection, error) {
 	result := &UserCollection{}
 	statusCode, err := api.doRequest(
@@ -512,7 +557,7 @@ func (api *API) GetGroupMembers(groupName string, params CollectionParameters) (
 }
 
 // Search search for entities in Confluence using the Confluence Query Language (CQL)
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#search-search
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#search-search
 func (api *API) Search(params SearchParameters) (*SearchResult, error) {
 	result := &SearchResult{}
 	statusCode, err := api.doRequest(
@@ -537,7 +582,7 @@ func (api *API) Search(params SearchParameters) (*SearchResult, error) {
 }
 
 // SearchContent fetch a list of content using the Confluence Query Language (CQL)
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#content-search
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#content-search
 func (api *API) SearchContent(params ContentSearchParameters) (*ContentCollection, error) {
 	result := &ContentCollection{}
 	statusCode, err := api.doRequest(
@@ -562,7 +607,7 @@ func (api *API) SearchContent(params ContentSearchParameters) (*ContentCollectio
 }
 
 // GetSpaces fetch information about a number of spaces
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#space-spaces
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#space-spaces
 func (api *API) GetSpaces(params SpaceParameters) (*SpaceCollection, error) {
 	result := &SpaceCollection{}
 	statusCode, err := api.doRequest(
@@ -585,7 +630,7 @@ func (api *API) GetSpaces(params SpaceParameters) (*SpaceCollection, error) {
 }
 
 // GetSpace fetch information about a space
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#space-space
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#space-space
 func (api *API) GetSpace(spaceKey string, params Parameters) (*Space, error) {
 	result := &Space{}
 	statusCode, err := api.doRequest(
@@ -610,7 +655,7 @@ func (api *API) GetSpace(spaceKey string, params Parameters) (*Space, error) {
 }
 
 // GetSpaceContent fetch the content in this given space
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#space-contents
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#space-contents
 func (api *API) GetSpaceContent(spaceKey string, params SpaceParameters) (*Contents, error) {
 	result := &Contents{}
 	statusCode, err := api.doRequest(
@@ -635,7 +680,7 @@ func (api *API) GetSpaceContent(spaceKey string, params SpaceParameters) (*Conte
 }
 
 // GetSpaceContentWithType fetch the content in this given space with the given type
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#space-contentsWithType
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#space-contentsWithType
 func (api *API) GetSpaceContentWithType(spaceKey, contentType string, params SpaceParameters) (*Contents, error) {
 	result := &Contents{}
 	statusCode, err := api.doRequest(
@@ -660,7 +705,7 @@ func (api *API) GetSpaceContentWithType(spaceKey, contentType string, params Spa
 }
 
 // GetUser fetch information about a user identified by either user key or username
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user-getUser
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#user-getUser
 func (api *API) GetUser(params UserParameters) (*User, error) {
 	result := &User{}
 	statusCode, err := api.doRequest(
@@ -685,12 +730,12 @@ func (api *API) GetUser(params UserParameters) (*User, error) {
 }
 
 // GetAnonymousUser fetch information about the how anonymous is represented in confluence
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user-getAnonymous
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#user-getAnonymous
 func (api *API) GetAnonymousUser() (*User, error) {
 	result := &User{}
 	statusCode, err := api.doRequest(
 		"GET", "/rest/api/user/anonymous",
-		EmptyParameters{}, result, nil,
+		emptyParams, result, nil,
 	)
 
 	if err != nil {
@@ -708,7 +753,7 @@ func (api *API) GetAnonymousUser() (*User, error) {
 }
 
 // GetCurrentUser fetch information about the current logged in user
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user-getCurrent
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#user-getCurrent
 func (api *API) GetCurrentUser(params ExpandParameters) (*User, error) {
 	result := &User{}
 	statusCode, err := api.doRequest(
@@ -731,7 +776,7 @@ func (api *API) GetCurrentUser(params ExpandParameters) (*User, error) {
 }
 
 // GetUserGroups fetch collection of groups that the given user is a member of
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user-getGroups
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#user-getGroups
 func (api *API) GetUserGroups(params UserParameters) (*GroupCollection, error) {
 	result := &GroupCollection{}
 	statusCode, err := api.doRequest(
@@ -754,7 +799,7 @@ func (api *API) GetUserGroups(params UserParameters) (*GroupCollection, error) {
 }
 
 // IsWatchingContent fetch information about whether a user is watching a specified content
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user/watch-isWatchingContent
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#user/watch-isWatchingContent
 func (api *API) IsWatchingContent(contentID string, params WatchParameters) (*WatchStatus, error) {
 	result := &WatchStatus{}
 	statusCode, err := api.doRequest(
@@ -779,7 +824,7 @@ func (api *API) IsWatchingContent(contentID string, params WatchParameters) (*Wa
 }
 
 // IsWatchingSpace fetch information about whether a user is watching a specified space
-// https://docs.atlassian.com/ConfluenceServer/rest/6.8.0/#user/watch-isWatchingSpace
+// https://docs.atlassian.com/ConfluenceServer/rest/6.15.8/#user/watch-isWatchingSpace
 func (api *API) IsWatchingSpace(spaceKey string, params WatchParameters) (*WatchStatus, error) {
 	result := &WatchStatus{}
 	statusCode, err := api.doRequest(
@@ -832,6 +877,35 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 // ProfileURL return link to profile
 func (api *API) ProfileURL(u *User) string {
 	return api.url + "/display/~" + u.Name
+}
+
+// GenTinyLink generates tiny link for content with given ID
+func (api *API) GenTinyLink(contentID string) string {
+	id, err := strconv.ParseUint(contentID, 10, 32)
+
+	if err != nil {
+		return ""
+	}
+
+	buf := make([]byte, 4)
+	binary.LittleEndian.PutUint32(buf, uint32(id))
+
+	var tinyID string
+
+	for _, r := range base64.StdEncoding.EncodeToString(buf) {
+		switch r {
+		case '/':
+			tinyID += "-"
+		case '+':
+			tinyID += "_"
+		default:
+			tinyID += string(r)
+		}
+	}
+
+	tinyID = strings.TrimRight(tinyID, "A=")
+
+	return api.url + "/x/" + tinyID
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -924,4 +998,86 @@ func genBasicAuthHeader(username, password string) string {
 // makeUnknownError create error struct for unknown error
 func makeUnknownError(statusCode int) error {
 	return fmt.Errorf("Unknown error occurred (status code %d)", statusCode)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// convertRestrictionsData converts restrctions data from private to public format
+func convertRestrictionsData(data *restrictionsInfo) *Restrictions {
+	result := &Restrictions{}
+
+	if data == nil {
+		return result
+	}
+
+	var restr *RestrictionData
+
+	for _, perm := range data.Permissions {
+		if len(perm) != 5 {
+			continue
+		}
+
+		pType, pCategory, pTarget := perm[0], perm[1], perm[2]
+
+		switch pType {
+		case "View":
+			if result.Read == nil {
+				result.Read = &Restriction{OPERATION_READ, &RestrictionData{}}
+			}
+
+			restr = result.Read.Data
+
+		case "Edit":
+			if result.Update == nil {
+				result.Update = &Restriction{OPERATION_UPDATE, &RestrictionData{}}
+			}
+
+			restr = result.Update.Data
+		}
+
+		switch pCategory {
+		case "group":
+			if restr.Group == nil {
+				restr.Group = &GroupCollection{}
+			}
+
+			restr.Group.Size++
+			restr.Group.Limit++
+			restr.Group.Results = append(restr.Group.Results, &Group{"group", pTarget})
+
+		case "user":
+			if restr.User == nil {
+				restr.User = &UserCollection{}
+			}
+
+			restr.User.Size++
+			restr.User.Limit++
+			restr.User.Results = append(
+				restr.User.Results,
+				convertWatcherToUser(data.Users[pTarget].User),
+			)
+		}
+	}
+
+	return result
+}
+
+// convertWatcherToUser converts watcher struct to user struct
+func convertWatcherToUser(w *Watcher) *User {
+	if w == nil {
+		return nil
+	}
+
+	return &User{
+		Type:        w.Type,
+		Name:        w.Name,
+		Key:         w.Key,
+		DisplayName: w.DisplayName,
+		ProfilePicture: &Icon{
+			Path:      w.AvatarURL,
+			Width:     48,
+			Height:    48,
+			IsDefault: false,
+		},
+	}
 }

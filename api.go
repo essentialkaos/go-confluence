@@ -2,7 +2,7 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2019 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,6 +57,12 @@ const (
 	UNITS_DAYS    = "days"
 	UNITS_MONTHS  = "months"
 	UNITS_YEARS   = "years"
+)
+
+// Operations types
+const (
+	OPERATION_READ   = "read"
+	OPERATION_UPDATE = "update"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
