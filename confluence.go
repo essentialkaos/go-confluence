@@ -9,10 +9,13 @@ package confluence
 
 import (
 	"encoding/base64"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -874,6 +877,37 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 // ProfileURL return link to profile
 func (api *API) ProfileURL(u *User) string {
 	return api.url + "/display/~" + u.Name
+}
+
+// GenTinyLink generates tiny link for content with given ID
+func (api *API) GenTinyLink(contentID string) string {
+	id, err := strconv.ParseUint(contentID, 10, 32)
+
+	if err != nil {
+		return ""
+	}
+
+	buf := make([]byte, 4)
+	binary.LittleEndian.PutUint32(buf, uint32(id))
+
+	var tinyID string
+
+	for _, r := range base64.StdEncoding.EncodeToString(buf) {
+		switch r {
+		case '/':
+			tinyID += "-"
+		case '+':
+			tinyID += "_"
+		case '\n':
+			tinyID += "/"
+		default:
+			tinyID += string(r)
+		}
+	}
+
+	tinyID = strings.TrimRight(tinyID, "A=")
+
+	return api.url + "/x/" + tinyID
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
