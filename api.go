@@ -2,7 +2,7 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2019 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2020 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -252,13 +252,13 @@ type View struct {
 
 // Version contains info about content version
 type Version struct {
+	Message     string   `json:"message"`
 	By          *User    `json:"by"`
 	When        *Date    `json:"when"`
-	Message     string   `json:"message"`
 	Number      int      `json:"number"`
+	Content     *Content `json:"content"`
 	IsMinorEdit bool     `json:"minorEdit"`
 	IsHidden    bool     `json:"hidden"`
-	Content     *Content `json:"content"`
 }
 
 // Extensions contains info about content extensions
@@ -292,13 +292,13 @@ type Metadata struct {
 
 // History contains info about content history
 type History struct {
-	IsLatest        bool          `json:"latest"`
 	CreatedBy       *User         `json:"createdBy"`
 	CreatedDate     *Date         `json:"createdDate"`
 	LastUpdated     *Version      `json:"lastUpdated"`
 	PreviousVersion *Version      `json:"previousVersion"`
 	NextVersion     *Version      `json:"nextVersion"`
 	Contributors    *Contributors `json:"contributors"`
+	IsLatest        bool          `json:"latest"`
 }
 
 // Contributors contains contributors list
@@ -385,13 +385,13 @@ type RestrictionData struct {
 
 // SearchParameters is params for fetching search results
 type SearchParameters struct {
+	Expand                []string `query:"expand"`
 	CQL                   string   `query:"cql"`
 	CQLContext            string   `query:"cqlcontext"`
 	Excerpt               string   `query:"excerpt"`
-	IncludeArchivedSpaces bool     `query:"includeArchivedSpaces"`
-	Expand                []string `query:"expand"`
 	Start                 int      `query:"start"`
 	Limit                 int      `query:"limit"`
+	IncludeArchivedSpaces bool     `query:"includeArchivedSpaces"`
 }
 
 // SearchResult contains contains paginated list of search results
@@ -422,14 +422,14 @@ type SearchEntity struct {
 // SpaceParameters is params for fetching info about space
 type SpaceParameters struct {
 	SpaceKey  []string `query:"spaceKey,unwrap"`
+	Expand    []string `query:"expand"`
 	Type      string   `query:"type"`
 	Status    string   `query:"status"`
 	Label     string   `query:"label"`
-	Favourite bool     `query:"favourite"`
 	Depth     string   `query:"depth"`
-	Expand    []string `query:"expand"`
 	Start     int      `query:"start"`
 	Limit     int      `query:"limit"`
+	Favourite bool     `query:"favourite"`
 }
 
 // Space contains info about space

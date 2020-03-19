@@ -80,3 +80,10 @@ func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(e, Equals, ExtensionPosition(-1))
 }
+
+func (s *ConfluenceSuite) TestCalendarIDValidator(c *C) {
+	c.Assert(IsValidCalendarID(""), Equals, false)
+	c.Assert(IsValidCalendarID("1a72410b-6417-4869-9260-9ec13816e48q"), Equals, false)
+	c.Assert(IsValidCalendarID("1a72410b164175486969260f9ec13816e481"), Equals, false)
+	c.Assert(IsValidCalendarID("1a72410b-6417-4869-9260-9ec13816e481"), Equals, true)
+}
