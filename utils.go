@@ -41,46 +41,16 @@ func paramsToQuery(params interface{}) string {
 
 		switch value.Type().String() {
 		case "string":
-			if value.String() != "" {
-				result += tag + "=" + esc(value.String()) + "&"
-			} else {
-				if hasTagOption(tag, _OPTION_RESPECT) {
-					result += getTagName(tag) + "=&"
-				}
-			}
+			result += formatString(tag, value)
 
 		case "int", "int64":
-			if value.Int() != 0 {
-				result += tag + "=" + fmt.Sprintf("%d", value.Int()) + "&"
-			} else {
-				if hasTagOption(tag, _OPTION_RESPECT) {
-					result += getTagName(tag) + "=0&"
-				}
-			}
+			result += formatInt(tag, value)
 
 		case "bool":
-			b := value.Bool()
-			if hasTagOption(tag, _OPTION_REVERSE) && b {
-				result += getTagName(tag) + "=false&"
-			} else {
-				if b {
-					result += getTagName(tag) + "=true&"
-				} else {
-					if hasTagOption(tag, _OPTION_RESPECT) {
-						result += getTagName(tag) + "=false&"
-					}
-				}
-			}
+			result += formatBool(tag, value)
 
 		case "time.Time":
-			d := value.Interface().(time.Time)
-			if !d.IsZero() {
-				if hasTagOption(tag, _OPTION_TIMEDATE) {
-					result += getTagName(tag) + "=" + d.Format("2006-01-02T15:04:05Z") + "&"
-				} else {
-					result += tag + "=" + d.Format("2006-01-02") + "&"
-				}
-			}
+			result += formatTime(tag, value)
 
 		case "[]string":
 			if value.Len() > 0 {
@@ -96,8 +66,68 @@ func paramsToQuery(params interface{}) string {
 	return result[:len(result)-1]
 }
 
-// formatSlice format slice
-func formatSlice(tag string, s reflect.Value) string {
+// formatString returns string representation of string for query string
+func formatString(tag string, value reflect.Value) string {
+	if value.String() != "" {
+		return tag + "=" + esc(value.String()) + "&"
+	} else {
+		if hasTagOption(tag, _OPTION_RESPECT) {
+			return getTagName(tag) + "=&"
+		}
+	}
+
+	return ""
+}
+
+// formatInt returns string representation of int/int64 for query string
+func formatInt(tag string, value reflect.Value) string {
+	if value.Int() != 0 {
+		return tag + "=" + fmt.Sprintf("%d", value.Int()) + "&"
+	} else {
+		if hasTagOption(tag, _OPTION_RESPECT) {
+			return getTagName(tag) + "=0&"
+		}
+	}
+
+	return ""
+}
+
+// formatBool returns string representation of boolean for query string
+func formatBool(tag string, value reflect.Value) string {
+	b := value.Bool()
+
+	if hasTagOption(tag, _OPTION_REVERSE) && b {
+		return getTagName(tag) + "=false&"
+	} else {
+		if b {
+			return getTagName(tag) + "=true&"
+		} else {
+			if hasTagOption(tag, _OPTION_RESPECT) {
+				return getTagName(tag) + "=false&"
+			}
+		}
+	}
+
+	return ""
+}
+
+// formatTime returns string representation of time and date for query string
+func formatTime(tag string, value reflect.Value) string {
+	d := value.Interface().(time.Time)
+
+	if !d.IsZero() {
+		if hasTagOption(tag, _OPTION_TIMEDATE) {
+			return getTagName(tag) + "=" + d.Format("2006-01-02T15:04:05Z") + "&"
+		} else {
+			return tag + "=" + d.Format("2006-01-02") + "&"
+		}
+	}
+
+	return ""
+}
+
+// formatSlice returns string representation of slice for query string
+func formatSlice(tag string, value reflect.Value) string {
 	var result string
 
 	name := getTagName(tag)
@@ -107,8 +137,8 @@ func formatSlice(tag string, s reflect.Value) string {
 		result += name + "="
 	}
 
-	for i := 0; i < s.Len(); i++ {
-		v := s.Index(i)
+	for i := 0; i < value.Len(); i++ {
+		v := value.Index(i)
 
 		if unwrap {
 			result += name + "=" + esc(v.String()) + "&"

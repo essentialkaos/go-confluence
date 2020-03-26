@@ -12,6 +12,21 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+type MyParams struct {
+	S  string    `query:"s,respect"`
+	I  int       `query:"i,respect"`
+	B  bool      `query:"b,respect"`
+	BR bool      `query:"br,reverse"`
+	BN bool      `query:"bn"`
+	DN time.Time `query:"dn"`
+}
+
+func (p MyParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 func Test(t *testing.T) { TestingT(t) }
 
 type ConfluenceSuite struct{}
@@ -46,6 +61,15 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 	}
 
 	c.Assert(p.ToQuery(), Equals, "spaceKey=TS1&spaceKey=TS2&spaceKey=TS3&favourite=true")
+
+	p = WatchParameters{}
+
+	c.Assert(p.ToQuery(), Equals, "")
+
+	p = MyParams{BR: true}
+	pp := []string{"s=", "i=0", "b=false", "br=false"}
+
+	c.Assert(validateQuery(p.ToQuery(), pp), Equals, true)
 }
 
 func (s *ConfluenceSuite) TestTinyLinkGeneration(c *C) {
