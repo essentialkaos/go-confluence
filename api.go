@@ -8,6 +8,7 @@ package confluence
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -748,7 +749,7 @@ func (p SpaceParameters) Validate() error {
 // Validate validates parameters
 func (p UserParameters) Validate() error {
 	if p.Key == "" && p.Username == "" {
-		return error.New("Key or Username must be set")
+		return errors.New("Key or Username must be set")
 	}
 
 	return nil
