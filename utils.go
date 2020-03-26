@@ -53,9 +53,7 @@ func paramsToQuery(params interface{}) string {
 			result += formatTime(tag, value)
 
 		case "[]string":
-			if value.Len() > 0 {
-				result += formatSlice(tag, value) + "&"
-			}
+			result += formatSlice(tag, value)
 		}
 	}
 
@@ -128,6 +126,10 @@ func formatTime(tag string, value reflect.Value) string {
 
 // formatSlice returns string representation of slice for query string
 func formatSlice(tag string, value reflect.Value) string {
+	if value.Len() == 0 {
+		return ""
+	}
+
 	var result string
 
 	name := getTagName(tag)
@@ -147,7 +149,7 @@ func formatSlice(tag string, value reflect.Value) string {
 		}
 	}
 
-	return result[:len(result)-1]
+	return result[:len(result)-1] + "&"
 }
 
 // getTagOption extract option from tag
