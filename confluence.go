@@ -914,6 +914,12 @@ func (api *API) GenTinyLink(contentID string) string {
 
 // doRequest create and execute request
 func (api *API) doRequest(method, uri string, params Parameters, result, body interface{}) (int, error) {
+	err := params.Validate()
+
+	if err != nil {
+		return -1, err
+	}
+
 	req := api.acquireRequest(method, uri, params)
 	resp := fasthttp.AcquireResponse()
 
@@ -930,7 +936,7 @@ func (api *API) doRequest(method, uri string, params Parameters, result, body in
 		req.SetBody(bodyData)
 	}
 
-	err := api.Client.Do(req, resp)
+	err = api.Client.Do(req, resp)
 
 	if err != nil {
 		return -1, err

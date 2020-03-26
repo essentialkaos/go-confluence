@@ -25,6 +25,10 @@ func (p MyParams) ToQuery() string {
 	return paramsToQuery(p)
 }
 
+func (p MyParams) Validate() error {
+	return nil
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Test(t *testing.T) { TestingT(t) }

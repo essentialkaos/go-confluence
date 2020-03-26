@@ -160,28 +160,12 @@ type CalendarUser struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// ErrWrongIDFormat returns if sub-calendar ID has the wrong format
-var ErrWrongIDFormat = errors.New("Sub-calendar ID has the wrong format")
-
-// ErrNoID returns if sub-calendar ID is not defined
-var ErrNoID = errors.New("Sub-calendar ID is mandatory")
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
 var idValidationRegex = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetCalendarEvents fetch events from given calendar
 func (api *API) GetCalendarEvents(params CalendarEventsParameters) (*CalendarEventCollection, error) {
-	if params.SubCalendarID == "" {
-		return nil, ErrNoID
-	}
-
-	if !IsValidCalendarID(params.SubCalendarID) {
-		return nil, ErrWrongIDFormat
-	}
-
 	result := &CalendarEventCollection{}
 	statusCode, err := api.doRequest(
 		"GET", _REST_BASE+"/calendar/events.json",
@@ -201,16 +185,6 @@ func (api *API) GetCalendarEvents(params CalendarEventsParameters) (*CalendarEve
 }
 
 func (api *API) GetCalendars(params CalendarsParameters) (*CalendarCollection, error) {
-	for _, id := range params.IncludeSubCalendarID {
-		if id == "" {
-			return nil, ErrNoID
-		}
-
-		if !IsValidCalendarID(id) {
-			return nil, ErrWrongIDFormat
-		}
-	}
-
 	result := &CalendarCollection{}
 	statusCode, err := api.doRequest(
 		"GET", _REST_BASE+"/calendar/subcalendars.json",
@@ -232,6 +206,56 @@ func (api *API) GetCalendars(params CalendarsParameters) (*CalendarCollection, e
 // IsValidCalendarID validates calendar ID
 func IsValidCalendarID(id string) bool {
 	return idValidationRegex.MatchString(id)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Validate validates parameters
+func (p CalendarEventsParameters) Validate() error {
+	switch {
+	case p.SubCalendarID == "":
+		return errors.New("SubCalendarID is mandatory and must be set")
+
+	case IsValidCalendarID(p.SubCalendarID):
+		return errors.New("SubCalendarID contains invalid calendar ID")
+
+	case p.UserTimezoneID == "":
+		return errors.New("UserTimezoneID is mandatory and must be set")
+
+	case p.Start.IsZero():
+		return errors.New("Start is mandatory and must be set")
+
+	case p.End.IsZero():
+		return errors.New("End is mandatory and must be set")
+	}
+
+	return nil
+}
+
+// Validate validates parameters
+func (p CalendarsParameters) Validate() error {
+	switch {
+	case len(p.IncludeSubCalendarID) == 0:
+		return errors.New("IncludeSubCalendarID is mandatory and must be set")
+
+	case p.CalendarContext == "":
+		return errors.New("CalendarContext is mandatory and must be set")
+
+	case p.ViewingSpaceKey == "":
+		return errors.New("ViewingSpaceKey is mandatory and must be set")
+	}
+
+	for _, id := range p.IncludeSubCalendarID {
+		if id == "" {
+			return errors.New("IncludeSubCalendarID is mandatory and must be set")
+		}
+
+		if !IsValidCalendarID(id) {
+			return errors.New("IncludeSubCalendarID contains invalid calendar ID")
+		}
+	}
+
+	return nil
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

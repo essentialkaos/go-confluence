@@ -67,9 +67,10 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Parameters is interface for params structs
+// Parameters is interface for parameters structs
 type Parameters interface {
 	ToQuery() string
+	Validate() error
 }
 
 // Date is RFC3339 encoded date
@@ -662,6 +663,88 @@ func (d *Timestamp) UnmarshalJSON(b []byte) error {
 		return fmt.Errorf("Cannot unmarshal Timestamp value: %v", err)
 	}
 
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Validate validates parameters
+func (p EmptyParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ExpandParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p CollectionParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p AuditParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p AuditSinceParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ContentParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ContentIDParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ContentSearchParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ChildrenParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p AttachmentParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p LabelParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p SearchParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p SpaceParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p UserParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p WatchParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ListWatchersParameters) Validate() error {
 	return nil
 }
 
