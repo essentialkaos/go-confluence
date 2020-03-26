@@ -695,6 +695,10 @@ func (p AuditSinceParameters) Validate() error {
 
 // Validate validates parameters
 func (p ContentParameters) Validate() error {
+	if p.SpaceKey == "" {
+		return errors.New("SpaceKey is mandatory and must be set")
+	}
+
 	return nil
 }
 
@@ -725,16 +729,28 @@ func (p LabelParameters) Validate() error {
 
 // Validate validates parameters
 func (p SearchParameters) Validate() error {
+	if p.CQL == "" {
+		return errors.New("CQL is mandatory and must be set")
+	}
+
 	return nil
 }
 
 // Validate validates parameters
 func (p SpaceParameters) Validate() error {
+	if len(p.SpaceKey) == 0 {
+		return errors.New("SpaceKey is mandatory and must be set")
+	}
+
 	return nil
 }
 
 // Validate validates parameters
 func (p UserParameters) Validate() error {
+	if p.Key == "" && p.Username == "" {
+		return error.New("Key or Username must be set")
+	}
+
 	return nil
 }
 
