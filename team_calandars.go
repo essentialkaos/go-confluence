@@ -216,7 +216,7 @@ func (p CalendarEventsParameters) Validate() error {
 	case p.SubCalendarID == "":
 		return errors.New("SubCalendarID is mandatory and must be set")
 
-	case IsValidCalendarID(p.SubCalendarID):
+	case !IsValidCalendarID(p.SubCalendarID):
 		return errors.New("SubCalendarID contains invalid calendar ID")
 
 	case p.UserTimezoneID == "":
