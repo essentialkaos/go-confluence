@@ -10,13 +10,10 @@ package confluence
 import (
 	"errors"
 	"regexp"
-	"strconv"
 	"time"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
-
-const _CALENDAR_TIME_FORMAT = "2006-01-02T15:04:05Z"
 
 const _REST_BASE = "/rest/calendar-services/1.0"
 
@@ -30,19 +27,23 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// EventsParameters contains request params for events from Team Calendars API
-type EventsParameters struct {
-	SubCalendarID  string
-	UserTimezoneID string
-	Start          time.Time
-	End            time.Time
+// CalendarEventsParameters contains request params for events from Team Calendars API
+type CalendarEventsParameters struct {
+	SubCalendarID  string    `query:"subCalendarId"`
+	UserTimezoneID string    `query:"userTimeZoneId"`
+	Start          time.Time `query:"start,timedate"`
+	End            time.Time `query:"end,timedate"`
+
+	timestamp int64 `query:"_"`
 }
 
 // CalendarsParameters contains request params for calendars from Team Calendars API
 type CalendarsParameters struct {
-	IncludeSubCalendarID []string
-	CalendarContext      string
-	ViewingSpaceKey      string
+	IncludeSubCalendarID []string `query:"include,unwrap"`
+	CalendarContext      string   `query:"calendarContext"`
+	ViewingSpaceKey      string   `query:"viewingSpaceKey"`
+
+	timestamp int64 `query:"_"`
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -172,7 +173,7 @@ var idValidationRegex = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // GetCalendarEvents fetch events from given calendar
-func (api *API) GetCalendarEvents(params EventsParameters) (*CalendarEventCollection, error) {
+func (api *API) GetCalendarEvents(params CalendarEventsParameters) (*CalendarEventCollection, error) {
 	if params.SubCalendarID == "" {
 		return nil, ErrNoID
 	}
@@ -235,55 +236,14 @@ func IsValidCalendarID(id string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// codebeat:disable[CYCLO]
-
 // ToQuery convert params to URL query
-func (p EventsParameters) ToQuery() string {
-	now := time.Now()
-	result := "subCalendarId=" + p.SubCalendarID + "&"
-
-	if p.UserTimezoneID == "" {
-		result += "userTimeZoneId=Etc/UTC&"
-	} else {
-		result += "userTimeZoneId=" + p.UserTimezoneID + "&"
-	}
-
-	if p.Start.IsZero() {
-		result += "start=" + now.Add(time.Hour*-720).Format(_CALENDAR_TIME_FORMAT) + "&"
-	} else {
-		result += "start=" + p.Start.Format(_CALENDAR_TIME_FORMAT) + "&"
-	}
-
-	if p.End.IsZero() {
-		result += "end=" + now.Add(time.Hour*720).Format(_CALENDAR_TIME_FORMAT) + "&"
-	} else {
-		result += "end=" + p.End.Format(_CALENDAR_TIME_FORMAT) + "&"
-	}
-
-	return result + "_=" + strconv.FormatInt(now.UnixNano(), 10)
+func (p CalendarEventsParameters) ToQuery() string {
+	p.timestamp = time.Now().UnixNano()
+	return paramsToQuery(p)
 }
 
 // ToQuery convert params to URL query
 func (p CalendarsParameters) ToQuery() string {
-	var result string
-
-	now := time.Now()
-
-	if p.CalendarContext != "" {
-		result = "calendarContext=" + p.CalendarContext + "&"
-	} else {
-		result = "calendarContext=" + CALENDAR_CONTEXT_MY + "&"
-	}
-
-	if p.ViewingSpaceKey != "" {
-		result += "viewingSpaceKey=" + p.ViewingSpaceKey + "&"
-	}
-
-	for _, id := range p.IncludeSubCalendarID {
-		result += "include=" + id + "&"
-	}
-
-	return result + "_=" + strconv.FormatInt(now.UnixNano(), 10)
+	p.timestamp = time.Now().UnixNano()
+	return paramsToQuery(p)
 }
-
-// codebeat:enable[CYCLO]

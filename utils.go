@@ -19,9 +19,10 @@ import (
 
 // Supported options
 const (
-	_OPTION_UNWRAP  = "unwrap"
-	_OPTION_RESPECT = "respect"
-	_OPTION_REVERSE = "reverse"
+	_OPTION_UNWRAP   = "unwrap"
+	_OPTION_RESPECT  = "respect"
+	_OPTION_REVERSE  = "reverse"
+	_OPTION_TIMEDATE = "timedate"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -48,7 +49,7 @@ func paramsToQuery(params interface{}) string {
 				}
 			}
 
-		case "int":
+		case "int", "int64":
 			if value.Int() != 0 {
 				result += tag + "=" + fmt.Sprintf("%d", value.Int()) + "&"
 			} else {
@@ -74,7 +75,11 @@ func paramsToQuery(params interface{}) string {
 		case "time.Time":
 			d := value.Interface().(time.Time)
 			if !d.IsZero() {
-				result += tag + "=" + fmt.Sprintf("%d-%02d-%02d", d.Year(), d.Month(), d.Day()) + "&"
+				if hasTagOption(tag, _OPTION_TIMEDATE) {
+					result += getTagName(tag) + "=" + d.Format("2006-01-02T15:04:05Z") + "&"
+				} else {
+					result += tag + "=" + d.Format("2006-01-02") + "&"
+				}
 			}
 
 		case "[]string":
