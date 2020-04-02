@@ -3,11 +3,31 @@ package confluence
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"strings"
 	"testing"
 	"time"
 
 	. "pkg.re/check.v1"
 )
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+type MyParams struct {
+	S  string    `query:"s,respect"`
+	I  int       `query:"i,respect"`
+	B  bool      `query:"b,respect"`
+	BR bool      `query:"br,reverse"`
+	BN bool      `query:"bn"`
+	DN time.Time `query:"dn"`
+}
+
+func (p MyParams) ToQuery() string {
+	return paramsToQuery(p)
+}
+
+func (p MyParams) Validate() error {
+	return nil
+}
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -45,6 +65,15 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 	}
 
 	c.Assert(p.ToQuery(), Equals, "spaceKey=TS1&spaceKey=TS2&spaceKey=TS3&favourite=true")
+
+	p = WatchParameters{}
+
+	c.Assert(p.ToQuery(), Equals, "")
+
+	p = MyParams{BR: true}
+	pp := []string{"s=", "i=0", "b=false", "br=false"}
+
+	c.Assert(validateQuery(p.ToQuery(), pp), Equals, true)
 }
 
 func (s *ConfluenceSuite) TestTinyLinkGeneration(c *C) {
@@ -79,4 +108,72 @@ func (s *ConfluenceSuite) TestCustomUnmarshalers(c *C) {
 
 	c.Assert(err, IsNil)
 	c.Assert(e, Equals, ExtensionPosition(-1))
+}
+
+func (s *ConfluenceSuite) TestCalendarIDValidator(c *C) {
+	c.Assert(IsValidCalendarID(""), Equals, false)
+	c.Assert(IsValidCalendarID("1a72410b-6417-4869-9260-9ec13816e48q"), Equals, false)
+	c.Assert(IsValidCalendarID("1a72410b164175486969260f9ec13816e481"), Equals, false)
+	c.Assert(IsValidCalendarID("1a72410b-6417-4869-9260-9ec13816e481"), Equals, true)
+}
+
+func (s *ConfluenceSuite) TestCalendarParamsEncoding(c *C) {
+	p1 := CalendarEventsParameters{
+		SubCalendarID:  "1a72410b-6417-4869-9260-9ec13816e481",
+		UserTimezoneID: "Etc/UTC",
+		Start:          time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local),
+		End:            time.Date(2020, 1, 2, 12, 30, 45, 0, time.Local),
+	}
+
+	pp1 := []string{
+		"subCalendarId=1a72410b-6417-4869-9260-9ec13816e481",
+		"userTimeZoneId=Etc%2FUTC",
+		"start=2020-01-01T00:00:00Z",
+		"end=2020-01-02T12:30:45Z",
+	}
+
+	q1 := p1.ToQuery()
+
+	c.Assert(validateQuery(q1, pp1), Equals, true)
+	c.Assert(strings.Contains(q1, "&_=158"), Equals, true)
+
+	p2 := CalendarsParameters{
+		IncludeSubCalendarID: []string{
+			"1a72410b-6417-4869-9260-9ec13816e481",
+			"1a72410b-6417-4869-9260-9ec13816e482",
+		},
+		ViewingSpaceKey: "ABC",
+		CalendarContext: CALENDAR_CONTEXT_MY,
+	}
+
+	pp2 := []string{
+		"calendarContext=myCalendars",
+		"viewingSpaceKey=ABC",
+		"include=1a72410b-6417-4869-9260-9ec13816e481",
+		"include=1a72410b-6417-4869-9260-9ec13816e482",
+	}
+
+	q2 := p2.ToQuery()
+
+	c.Assert(validateQuery(q2, pp2), Equals, true)
+	c.Assert(strings.Contains(q2, "&_=158"), Equals, true)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+func validateQuery(query string, parts []string) bool {
+	queryParts := strings.Split(query, "&")
+
+LOOP:
+	for _, part := range parts {
+		for _, qp := range queryParts {
+			if part == qp {
+				continue LOOP
+			}
+		}
+
+		return false
+	}
+
+	return true
 }

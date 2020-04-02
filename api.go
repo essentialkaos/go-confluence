@@ -2,12 +2,13 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2019 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2020 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -67,9 +68,10 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Parameters is interface for params structs
+// Parameters is interface for parameters structs
 type Parameters interface {
 	ToQuery() string
+	Validate() error
 }
 
 // Date is RFC3339 encoded date
@@ -252,13 +254,13 @@ type View struct {
 
 // Version contains info about content version
 type Version struct {
+	Message     string   `json:"message"`
 	By          *User    `json:"by"`
 	When        *Date    `json:"when"`
-	Message     string   `json:"message"`
 	Number      int      `json:"number"`
+	Content     *Content `json:"content"`
 	IsMinorEdit bool     `json:"minorEdit"`
 	IsHidden    bool     `json:"hidden"`
-	Content     *Content `json:"content"`
 }
 
 // Extensions contains info about content extensions
@@ -292,13 +294,13 @@ type Metadata struct {
 
 // History contains info about content history
 type History struct {
-	IsLatest        bool          `json:"latest"`
 	CreatedBy       *User         `json:"createdBy"`
 	CreatedDate     *Date         `json:"createdDate"`
 	LastUpdated     *Version      `json:"lastUpdated"`
 	PreviousVersion *Version      `json:"previousVersion"`
 	NextVersion     *Version      `json:"nextVersion"`
 	Contributors    *Contributors `json:"contributors"`
+	IsLatest        bool          `json:"latest"`
 }
 
 // Contributors contains contributors list
@@ -385,13 +387,13 @@ type RestrictionData struct {
 
 // SearchParameters is params for fetching search results
 type SearchParameters struct {
+	Expand                []string `query:"expand"`
 	CQL                   string   `query:"cql"`
 	CQLContext            string   `query:"cqlcontext"`
 	Excerpt               string   `query:"excerpt"`
-	IncludeArchivedSpaces bool     `query:"includeArchivedSpaces"`
-	Expand                []string `query:"expand"`
 	Start                 int      `query:"start"`
 	Limit                 int      `query:"limit"`
+	IncludeArchivedSpaces bool     `query:"includeArchivedSpaces"`
 }
 
 // SearchResult contains contains paginated list of search results
@@ -422,14 +424,14 @@ type SearchEntity struct {
 // SpaceParameters is params for fetching info about space
 type SpaceParameters struct {
 	SpaceKey  []string `query:"spaceKey,unwrap"`
+	Expand    []string `query:"expand"`
 	Type      string   `query:"type"`
 	Status    string   `query:"status"`
 	Label     string   `query:"label"`
-	Favourite bool     `query:"favourite"`
 	Depth     string   `query:"depth"`
-	Expand    []string `query:"expand"`
 	Start     int      `query:"start"`
 	Limit     int      `query:"limit"`
+	Favourite bool     `query:"favourite"`
 }
 
 // Space contains info about space
@@ -662,6 +664,104 @@ func (d *Timestamp) UnmarshalJSON(b []byte) error {
 		return fmt.Errorf("Cannot unmarshal Timestamp value: %v", err)
 	}
 
+	return nil
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Validate validates parameters
+func (p EmptyParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ExpandParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p CollectionParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p AuditParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p AuditSinceParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ContentParameters) Validate() error {
+	if p.SpaceKey == "" {
+		return errors.New("SpaceKey is mandatory and must be set")
+	}
+
+	return nil
+}
+
+// Validate validates parameters
+func (p ContentIDParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ContentSearchParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ChildrenParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p AttachmentParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p LabelParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p SearchParameters) Validate() error {
+	if p.CQL == "" {
+		return errors.New("CQL is mandatory and must be set")
+	}
+
+	return nil
+}
+
+// Validate validates parameters
+func (p SpaceParameters) Validate() error {
+	if len(p.SpaceKey) == 0 {
+		return errors.New("SpaceKey is mandatory and must be set")
+	}
+
+	return nil
+}
+
+// Validate validates parameters
+func (p UserParameters) Validate() error {
+	if p.Key == "" && p.Username == "" {
+		return errors.New("Key or Username must be set")
+	}
+
+	return nil
+}
+
+// Validate validates parameters
+func (p WatchParameters) Validate() error {
+	return nil
+}
+
+// Validate validates parameters
+func (p ListWatchersParameters) Validate() error {
 	return nil
 }
 
