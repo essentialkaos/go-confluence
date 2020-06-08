@@ -3,6 +3,7 @@ package confluence
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -38,6 +39,8 @@ type ConfluenceSuite struct{}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var _ = Suite(&ConfluenceSuite{})
+
+var tsRegex = regexp.MustCompile(`\&\_\=[0-9]{19}`)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -135,7 +138,7 @@ func (s *ConfluenceSuite) TestCalendarParamsEncoding(c *C) {
 	q1 := p1.ToQuery()
 
 	c.Assert(validateQuery(q1, pp1), Equals, true)
-	c.Assert(strings.Contains(q1, "&_=158"), Equals, true)
+	c.Assert(tsRegex.MatchString(q1), Equals, true)
 
 	p2 := CalendarsParameters{
 		IncludeSubCalendarID: []string{
@@ -156,7 +159,7 @@ func (s *ConfluenceSuite) TestCalendarParamsEncoding(c *C) {
 	q2 := p2.ToQuery()
 
 	c.Assert(validateQuery(q2, pp2), Equals, true)
-	c.Assert(strings.Contains(q2, "&_=158"), Equals, true)
+	c.Assert(tsRegex.MatchString(q2), Equals, true)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
