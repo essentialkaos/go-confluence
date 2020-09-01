@@ -134,11 +134,14 @@ type CalendarEvent struct {
 	CustomEventTypeID     string          `json:"customEventTypeId"`
 	SubCalendarID         string          `json:"subCalendarId"`
 	IconURL               string          `json:"iconUrl"`
+	IconLink              string          `json:"iconLink"`
 	MediumIconURL         string          `json:"mediumIconUrl"`
 	BackgroundColor       string          `json:"backgroundColor"`
 	BorderColor           string          `json:"borderColor"`
 	TextColor             string          `json:"textColor"`
 	ColorScheme           string          `json:"colorScheme"`
+	Where                 string          `json:"where"`
+	FormattedStartDate    string          `json:"confluenceFormattedStartDate"`
 	Start                 *Date           `json:"start"`
 	End                   *Date           `json:"end"`
 	OriginalStartDateTime *Date           `json:"originalStartDateTime"`
