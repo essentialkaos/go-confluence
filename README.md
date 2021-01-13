@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-confluence.svg"/></a></p>
 
 <p align="center">
-  <a href="https://pkg.go.dev/pkg.re/essentialkaos/go-confluence.v5"><img src="https://gh.kaos.st/godoc.svg" /></a>
+  <a href="https://pkg.re/essentialkaos/go-confluence.v5?docs"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev"></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/go-confluence"><img src="https://goreportcard.com/badge/github.com/essentialkaos/go-confluence"></a>
   <a href="https://github.com/essentialkaos/go-confluence/actions"><img src="https://github.com/essentialkaos/go-confluence/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
   <a href="https://github.com/essentialkaos/go-confluence/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/go-confluence/workflows/CodeQL/badge.svg" /></a>
