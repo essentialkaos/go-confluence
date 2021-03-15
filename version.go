@@ -2,7 +2,7 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2020 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -12,7 +12,7 @@ const (
 	NAME = "Go-Confluence"
 
 	// VERSION is package version
-	VERSION = "5.1.0"
+	VERSION = "5.1.1"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //

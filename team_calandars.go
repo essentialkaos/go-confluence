@@ -2,7 +2,7 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2020 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2021 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -62,8 +62,8 @@ type CalendarCollection struct {
 
 // Calendar represents Team Calendars calendar
 type Calendar struct {
-	UsersPermittedToView      []string     `json:"usersPermittedToView"`
-	UsersPermittedToEdit      []string     `json:"usersPermittedToEdit"`
+	UsersPermittedToView      []*PermsUser `json:"usersPermittedToView"`
+	UsersPermittedToEdit      []*PermsUser `json:"usersPermittedToEdit"`
 	GroupsPermittedToView     []string     `json:"groupsPermittedToView"`
 	GroupsPermittedToEdit     []string     `json:"groupsPermittedToEdit"`
 	Warnings                  []string     `json:"warnings"`
@@ -161,6 +161,14 @@ type CalendarUser struct {
 	Email         string `json:"email"`
 }
 
+// PermsUser represents Team Calendars permissions user
+type PermsUser struct {
+	AvatarURL   string `json:"avatarUrl"`
+	Name        string `json:"name"`
+	DisplayName string `json:"fullName"`
+	Key         string `json:"id"`
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var idValidationRegex = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
@@ -237,12 +245,17 @@ func (p CalendarEventsParameters) Validate() error {
 
 // Validate validates parameters
 func (p CalendarsParameters) Validate() error {
+	if p.CalendarContext == "" {
+		return errors.New("CalendarContext is mandatory and must be set")
+	}
+
+	if p.CalendarContext == CALENDAR_CONTEXT_MY {
+		return nil
+	}
+
 	switch {
 	case len(p.IncludeSubCalendarID) == 0:
 		return errors.New("IncludeSubCalendarID is mandatory and must be set")
-
-	case p.CalendarContext == "":
-		return errors.New("CalendarContext is mandatory and must be set")
 
 	case p.ViewingSpaceKey == "":
 		return errors.New("ViewingSpaceKey is mandatory and must be set")
