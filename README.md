@@ -1,11 +1,11 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-confluence.svg"/></a></p>
 
 <p align="center">
-  <a href="https://pkg.re/essentialkaos/go-confluence.v5?docs"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev"></a>
-  <a href="https://goreportcard.com/report/github.com/essentialkaos/go-confluence"><img src="https://goreportcard.com/badge/github.com/essentialkaos/go-confluence"></a>
-  <a href="https://github.com/essentialkaos/go-confluence/actions"><img src="https://github.com/essentialkaos/go-confluence/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
-  <a href="https://github.com/essentialkaos/go-confluence/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/go-confluence/workflows/CodeQL/badge.svg" /></a>
-  <a href="https://codebeat.co/projects/github-com-essentialkaos-go-confluence-master"><img alt="codebeat badge" src="https://codebeat.co/badges/c367cff1-4b71-43de-9a47-9fb34e8c34df" /></a>
+  <a href="https://kaos.sh/g/go-confluence.v5"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev" /></a>
+  <a href="https://kaos.sh/r/go-confluence"><img src="https://kaos.sh/r/go-confluence.svg" alt="GoReportCard" /></a>
+  <a href="https://kaos.sh/w/go-confluence/ci"><img src="https://kaos.sh/w/go-confluence/ci.svg" alt="GitHub Actions CI Status" /></a>
+  <a href="https://kaos.sh/w/go-confluence/codeql"><img src="https://kaos.sh/w/go-confluence/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
+  <a href="https://kaos.sh/b/go-confluence"><img src="https://kaos.sh/b/c367cff1-4b71-43de-9a47-9fb34e8c34df.svg" alt="Codebeat badge" /></a>
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
 </p>
 
@@ -22,13 +22,13 @@ Currently, this package support only getting data from API (_i.e., you cannot cr
 Make sure you have a working Go 1.15+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
 ````
-go get pkg.re/essentialkaos/go-confluence.v5
+go get -d pkg.re/essentialkaos/go-confluence.v5
 ````
 
 For update to latest stable release, do:
 
 ```
-go get -u pkg.re/essentialkaos/go-confluence.v5
+go get -d -u pkg.re/essentialkaos/go-confluence.v5
 ```
 
 ### Usage example
@@ -71,8 +71,8 @@ func main() {
 
 | Branch     | Status |
 |------------|--------|
-| `master` (_Stable_) | [![CI](https://github.com/essentialkaos/go-confluence/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/go-confluence/actions) |
-| `develop` (_Unstable_) | [![CI](https://github.com/essentialkaos/go-confluence/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/go-confluence/actions) |
+| `master` (_Stable_) | [![CI](https://kaos.sh/w/go-confluence/ci.svg?branch=master)](https://kaos.sh/w/go-confluence/ci?query=branch:master) |
+| `develop` (_Unstable_) | [![CI](https://kaos.sh/w/go-confluence/ci.svg?branch=develop)](https://kaos.sh/w/go-confluence/ci?query=branch:develop) |
 
 ### License
 
