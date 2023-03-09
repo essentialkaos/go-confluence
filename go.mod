@@ -3,7 +3,7 @@ module github.com/essentialkaos/go-confluence/v5
 go 1.17
 
 require (
-	github.com/essentialkaos/check v1.3.0
+	github.com/essentialkaos/check v1.4.0
 	github.com/valyala/fasthttp v1.44.0
 )
 
