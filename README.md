@@ -50,7 +50,7 @@ func main() {
     return
   }
 
-  content, err := cf.GetContentByID(
+  content, err := api.GetContentByID(
     "18173522", cf.ContentIDParameters{
       Version: 4,
       Expand:  []string{"space", "body.view", "version"},
@@ -62,7 +62,7 @@ func main() {
     return
   }
 
-  fmt.Println("ID: %s\n", content.ID)
+  fmt.Printf("ID: %s\n", content.ID)
 }
 
 ```
