@@ -58,6 +58,7 @@ var (
 	ErrNoSpace           = errors.New("There is no space with the given key, or if the calling user does not have permission to view the space")
 	ErrNoUserPerms       = errors.New("User does not have permission to view users")
 	ErrNoUserFound       = errors.New("User with the given username or userkey does not exist")
+	ErrInitEmptyToken    = errors.New("Token can't be empty")
 )
 
 var emptyParams = EmptyParameters{}
@@ -96,6 +97,8 @@ func NewAPIWithToken(url, token string) (*API, error) {
 	switch {
 	case url == "":
 		return nil, ErrInitEmptyURL
+	case token == "":
+		return nil, ErrInitEmptyToken
 	}
 
 	return &API{
