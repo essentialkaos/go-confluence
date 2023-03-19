@@ -133,6 +133,7 @@ func (api *API) GetAuditRecords(params AuditParameters) (*AuditRecordCollection,
 		"GET", "/rest/api/audit",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -155,6 +156,7 @@ func (api *API) GetAuditRecordsSince(params AuditSinceParameters) (*AuditRecordC
 		"GET", "/rest/api/audit/since",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -177,6 +179,7 @@ func (api *API) GetAuditRetention() (*AuditRetentionInfo, error) {
 		"GET", "/rest/api/audit/retention",
 		emptyParams, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -199,6 +202,7 @@ func (api *API) GetContent(params ContentParameters) (*ContentCollection, error)
 		"GET", "/rest/api/content",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -223,6 +227,7 @@ func (api *API) GetContentByID(contentID string, params ContentIDParameters) (*C
 		"GET", "/rest/api/content/"+contentID,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -247,6 +252,7 @@ func (api *API) GetContentHistory(contentID string, params ExpandParameters) (*H
 		"GET", "/rest/api/content/"+contentID+"/history",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -271,6 +277,7 @@ func (api *API) GetContentChildren(contentID string, params ChildrenParameters) 
 		"GET", "/rest/api/content/"+contentID+"/child",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -295,6 +302,7 @@ func (api *API) GetContentChildrenByType(contentID, contentType string, params C
 		"GET", "/rest/api/content/"+contentID+"/child/"+contentType,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -319,6 +327,7 @@ func (api *API) GetContentComments(contentID string, params ChildrenParameters) 
 		"GET", "/rest/api/content/"+contentID+"/child/comment",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -343,6 +352,7 @@ func (api *API) GetAttachments(contentID string, params AttachmentParameters) (*
 		"GET", "/rest/api/content/"+contentID+"/child/attachment",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -367,6 +377,7 @@ func (api *API) GetDescendants(contentID string, params ExpandParameters) (*Cont
 		"GET", "/rest/api/content/"+contentID+"/descendant",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -391,6 +402,7 @@ func (api *API) GetDescendantsOfType(contentID, descType string, params ExpandPa
 		"GET", "/rest/api/content/"+contentID+"/descendant/"+descType,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -415,6 +427,7 @@ func (api *API) GetLabels(contentID string, params LabelParameters) (*LabelColle
 		"GET", "/rest/api/content/"+contentID+"/label",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -441,6 +454,7 @@ func (api *API) GetRestrictions(contentID, parentPageId, spaceKey string) (*Rest
 
 	result := &restrictionsInfo{}
 	statusCode, err := api.doRequest("GET", url, emptyParams, result, nil)
+
 	if err != nil {
 		return nil, err
 	}
@@ -465,6 +479,7 @@ func (api *API) GetRestrictionsByOperation(contentID string, params ExpandParame
 		"GET", "/rest/api/content/"+contentID+"/restriction/byOperation",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -487,6 +502,7 @@ func (api *API) GetRestrictionsForOperation(contentID, operation string, params 
 		"GET", "/rest/api/content/"+contentID+"/restriction/byOperation/"+operation,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -509,6 +525,7 @@ func (api *API) GetGroups(params CollectionParameters) (*GroupCollection, error)
 		"GET", "/rest/api/group",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -531,6 +548,7 @@ func (api *API) GetGroup(groupName string, params ExpandParameters) (*Group, err
 		"GET", "/rest/api/group/"+groupName,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -553,6 +571,7 @@ func (api *API) GetGroupMembers(groupName string, params CollectionParameters) (
 		"GET", "/rest/api/group/"+groupName+"/member",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -575,6 +594,7 @@ func (api *API) Search(params SearchParameters) (*SearchResult, error) {
 		"GET", "/rest/api/search",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -599,6 +619,7 @@ func (api *API) SearchContent(params ContentSearchParameters) (*ContentCollectio
 		"GET", "/rest/api/content/search",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -623,6 +644,7 @@ func (api *API) GetSpaces(params SpaceParameters) (*SpaceCollection, error) {
 		"GET", "/rest/api/space",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -645,6 +667,7 @@ func (api *API) GetSpace(spaceKey string, params Parameters) (*Space, error) {
 		"GET", "/rest/api/space/"+spaceKey,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -669,6 +692,7 @@ func (api *API) GetSpaceContent(spaceKey string, params SpaceParameters) (*Conte
 		"GET", "/rest/api/space/"+spaceKey+"/content",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -693,6 +717,7 @@ func (api *API) GetSpaceContentWithType(spaceKey, contentType string, params Spa
 		"GET", "/rest/api/space/"+spaceKey+"/content/"+contentType,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -717,6 +742,7 @@ func (api *API) GetUser(params UserParameters) (*User, error) {
 		"GET", "/rest/api/user",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -741,6 +767,7 @@ func (api *API) GetAnonymousUser() (*User, error) {
 		"GET", "/rest/api/user/anonymous",
 		emptyParams, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -763,6 +790,7 @@ func (api *API) GetCurrentUser(params ExpandParameters) (*User, error) {
 		"GET", "/rest/api/user/current",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -785,6 +813,7 @@ func (api *API) GetUserGroups(params UserParameters) (*GroupCollection, error) {
 		"GET", "/rest/api/user/memberof",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -807,6 +836,7 @@ func (api *API) IsWatchingContent(contentID string, params WatchParameters) (*Wa
 		"GET", "/rest/api/user/watch/content/"+contentID,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -831,6 +861,7 @@ func (api *API) IsWatchingSpace(spaceKey string, params WatchParameters) (*Watch
 		"GET", "/rest/api/user/watch/space/"+spaceKey,
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -854,6 +885,7 @@ func (api *API) ListWatchers(params ListWatchersParameters) (*WatchInfo, error) 
 		"GET", "/json/listwatchers.action",
 		params, result, nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -880,6 +912,7 @@ func (api *API) ProfileURL(u *User) string {
 // GenTinyLink generates tiny link for content with given ID
 func (api *API) GenTinyLink(contentID string) string {
 	id, err := strconv.ParseUint(contentID, 10, 32)
+
 	if err != nil {
 		return ""
 	}
@@ -912,6 +945,7 @@ func (api *API) GenTinyLink(contentID string) string {
 // doRequest create and execute request
 func (api *API) doRequest(method, uri string, params Parameters, result, body interface{}) (int, error) {
 	err := params.Validate()
+
 	if err != nil {
 		return -1, err
 	}
@@ -924,6 +958,7 @@ func (api *API) doRequest(method, uri string, params Parameters, result, body in
 
 	if body != nil {
 		bodyData, err := json.Marshal(body)
+
 		if err != nil {
 			return -1, err
 		}
@@ -967,11 +1002,7 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 	}
 
 	// Set auth header
-	if api.basicAuth != "" {
-		req.Header.Add("Authorization", "Basic "+api.basicAuth)
-	} else if api.token != "" {
-		req.Header.Add("Authorization", "Bearer "+api.token)
-	}
+	req.Header.Add("Authorization", "Basic "+api.basicAuth)
 
 	return req
 }
