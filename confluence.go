@@ -59,6 +59,7 @@ var (
 	ErrNoUserPerms       = errors.New("User does not have permission to view users")
 	ErrNoUserFound       = errors.New("User with the given username or userkey does not exist")
 	ErrInitEmptyToken    = errors.New("Token can't be empty")
+	ErrTokenFormat       = errors.New("Token length must be equal to 44")
 )
 
 var emptyParams = EmptyParameters{}
@@ -99,6 +100,8 @@ func NewAPIWithToken(url, token string) (*API, error) {
 		return nil, ErrInitEmptyURL
 	case token == "":
 		return nil, ErrInitEmptyToken
+	case len(token) != 44:
+		return nil, ErrTokenFormat
 	}
 
 	return &API{
