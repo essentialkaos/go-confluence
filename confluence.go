@@ -29,6 +29,7 @@ type API struct {
 
 	url       string // confluence URL
 	basicAuth string // basic auth
+	token     string // using personal access token
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -57,6 +58,8 @@ var (
 	ErrNoSpace           = errors.New("There is no space with the given key, or if the calling user does not have permission to view the space")
 	ErrNoUserPerms       = errors.New("User does not have permission to view users")
 	ErrNoUserFound       = errors.New("User with the given username or userkey does not exist")
+	ErrInitEmptyToken    = errors.New("Token can't be empty")
+	ErrTokenFormat       = errors.New("Token length must be equal to 44")
 )
 
 var emptyParams = EmptyParameters{}
@@ -85,6 +88,33 @@ func NewAPI(url, username, password string) (*API, error) {
 
 		url:       url,
 		basicAuth: genBasicAuthHeader(username, password),
+	}, nil
+}
+
+// NewAPIWithToken create new API struct using Token
+// See https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html
+// Support Confluence 7.9 and later
+func NewAPIWithToken(url, token string) (*API, error) {
+	switch {
+	case url == "":
+		return nil, ErrInitEmptyURL
+	case token == "":
+		return nil, ErrInitEmptyToken
+	case len(token) != 44:
+		return nil, ErrTokenFormat
+	}
+
+	return &API{
+		Client: &fasthttp.Client{
+			Name:                getUserAgent("", ""),
+			MaxIdleConnDuration: 5 * time.Second,
+			ReadTimeout:         3 * time.Second,
+			WriteTimeout:        3 * time.Second,
+			MaxConnsPerHost:     150,
+		},
+
+		url:   url,
+		token: token,
 	}, nil
 }
 

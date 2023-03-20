@@ -33,6 +33,8 @@ go get -d -u github.com/essentialkaos/go-confluence/v5
 
 ### Usage example
 
+Authentication with username and password.
+
 ```go
 package main
 
@@ -50,7 +52,7 @@ func main() {
     return
   }
 
-  content, err := cf.GetContentByID(
+  content, err := api.GetContentByID(
     "18173522", cf.ContentIDParameters{
       Version: 4,
       Expand:  []string{"space", "body.view", "version"},
@@ -62,9 +64,43 @@ func main() {
     return
   }
 
-  fmt.Println("ID: %s\n", content.ID)
+  fmt.Printf("ID: %s\n", content.ID)
 }
+```
 
+Authentication with personal token. Please make sure your confluence 7.9 version and later. See [Using Personal Access Tokens guide](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html)
+
+```go
+package main
+
+import (
+  "fmt"
+
+  cf "github.com/essentialkaos/go-confluence/v5"
+)
+
+func main() {
+  api, err := cf.NewAPIWithToken("https://confluence.domain.com", "your token")
+  api.SetUserAgent("MyApp", "1.2.3")
+
+  if err != nil {
+    fmt.Printf("Error: %v\n", err)
+    return
+  }
+
+  content, err := api.GetContentByID(
+    "18173522", cf.ContentIDParameters{
+      Version: 4,
+      Expand:  []string{"space", "body.view", "version"},
+    },
+  )
+  if err != nil {
+    fmt.Printf("Error: %v\n", err)
+    return
+  }
+
+  fmt.Printf("ID: %s\n", content.ID)
+}
 ```
 
 ### Build Status
