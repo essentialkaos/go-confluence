@@ -47,7 +47,7 @@ jobs:
 
       - name: Download dependencies
         working-directory: ${{env.SRC_DIR}}
-        run: make deps deps-test
+        run: make deps
 
       - name: Run tests
         working-directory: ${{env.SRC_DIR}}
