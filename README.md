@@ -19,16 +19,10 @@ Currently, this package support only getting data from API (_i.e., you cannot cr
 
 ### Installation
 
-Make sure you have a working Go 1.17+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.18+ workspace (_[instructions](https://golang.org/doc/install)_), then:
 
-````
-go get -d github.com/essentialkaos/go-confluence/v5
-````
-
-For update to latest stable release, do:
-
-```
-go get -d -u github.com/essentialkaos/go-confluence/v5
+```bash
+go get -u github.com/essentialkaos/go-confluence/v5
 ```
 
 ### Usage example
