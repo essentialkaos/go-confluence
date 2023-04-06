@@ -27,8 +27,8 @@ import (
 type API struct {
 	Client *fasthttp.Client // Client is client for http requests
 
-	url  string // confluence URL
-	auth string // auth data
+	url  string // Confluence URL
+	auth string // Auth data
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
