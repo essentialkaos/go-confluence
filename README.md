@@ -34,11 +34,12 @@ package main
 
 import (
   "fmt"
-  cf "github.com/essentialkaos/go-confluence/v5"
+  cf "github.com/essentialkaos/go-confluence/v6"
 )
 
 func main() {
-  api, err := cf.NewAPI("https://confluence.domain.com", "john", "MySuppaPAssWOrd")
+  api, err := cf.NewAPI("https://confluence.domain.com", cf.AuthBasic{"john", "MySuppaPAssWOrd"})
+
   api.SetUserAgent("MyApp", "1.2.3")
 
   if err != nil {
@@ -70,11 +71,12 @@ package main
 import (
   "fmt"
 
-  cf "github.com/essentialkaos/go-confluence/v5"
+  cf "github.com/essentialkaos/go-confluence/v6"
 )
 
 func main() {
-  api, err := cf.NewAPIWithToken("https://confluence.domain.com", "your token")
+  api, err := cf.NewAPI("https://confluence.domain.com", cf.AuthToken{"avaMTxxxqKaxpFHpmwHPXhjmUFfAJMaU3VXUji73EFhf"})
+
   api.SetUserAgent("MyApp", "1.2.3")
 
   if err != nil {
