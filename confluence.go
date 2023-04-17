@@ -985,14 +985,14 @@ func getUserAgent(app, version string) string {
 	if app != "" && version != "" {
 		return fmt.Sprintf(
 			"%s/%s %s/%s (go; %s; %s-%s)",
-			app, version, NAME, VERSION, runtime.Version(),
+			app, version, "Go-Confluence", "6", runtime.Version(),
 			runtime.GOARCH, runtime.GOOS,
 		)
 	}
 
 	return fmt.Sprintf(
 		"%s/%s (go; %s; %s-%s)",
-		NAME, VERSION, runtime.Version(),
+		"Go-Confluence", "6", runtime.Version(),
 		runtime.GOARCH, runtime.GOOS,
 	)
 }
