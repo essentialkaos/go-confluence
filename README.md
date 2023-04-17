@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/go-confluence.svg"/></a></p>
 
 <p align="center">
-  <a href="https://kaos.sh/g/go-confluence.v5"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev" /></a>
+  <a href="https://kaos.sh/g/go-confluence.v6"><img src="https://gh.kaos.st/godoc.svg" alt="PkgGoDev" /></a>
   <a href="https://kaos.sh/r/go-confluence"><img src="https://kaos.sh/r/go-confluence.svg" alt="GoReportCard" /></a>
   <a href="https://kaos.sh/w/go-confluence/ci"><img src="https://kaos.sh/w/go-confluence/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/w/go-confluence/codeql"><img src="https://kaos.sh/w/go-confluence/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
