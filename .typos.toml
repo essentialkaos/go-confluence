@@ -1,0 +1,6 @@
+[files]
+extend-exclude = ["go.sum"]
+
+[default.extend-identifiers]
+SanboxEventTypeReminders = "SanboxEventTypeReminders"
+sanboxEventTypeReminders = "sanboxEventTypeReminders"

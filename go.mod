@@ -1,4 +1,4 @@
-module github.com/essentialkaos/go-confluence/v5
+module github.com/essentialkaos/go-confluence/v6
 
 go 1.18
 

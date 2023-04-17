@@ -27,9 +27,8 @@ import (
 type API struct {
 	Client *fasthttp.Client // Client is client for http requests
 
-	url       string // confluence URL
-	basicAuth string // basic auth
-	token     string // using personal access token
+	url  string // Confluence URL
+	auth string // Auth data
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -47,19 +46,15 @@ type permission []string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// API errors
+// Errors
 var (
-	ErrInitEmptyURL      = errors.New("URL can't be empty")
-	ErrInitEmptyUser     = errors.New("User can't be empty")
-	ErrInitEmptyPassword = errors.New("Password can't be empty")
-	ErrNoPerms           = errors.New("User does not have permission to use confluence")
-	ErrQueryError        = errors.New("Query cannot be parsed")
-	ErrNoContent         = errors.New("There is no content with the given id, or if the calling user does not have permission to view the content")
-	ErrNoSpace           = errors.New("There is no space with the given key, or if the calling user does not have permission to view the space")
-	ErrNoUserPerms       = errors.New("User does not have permission to view users")
-	ErrNoUserFound       = errors.New("User with the given username or userkey does not exist")
-	ErrInitEmptyToken    = errors.New("Token can't be empty")
-	ErrTokenFormat       = errors.New("Token length must be equal to 44")
+	ErrEmptyURL    = errors.New("URL can't be empty")
+	ErrNoPerms     = errors.New("User does not have permission to use confluence")
+	ErrQueryError  = errors.New("Query cannot be parsed")
+	ErrNoContent   = errors.New("There is no content with the given id, or if the calling user does not have permission to view the content")
+	ErrNoSpace     = errors.New("There is no space with the given key, or if the calling user does not have permission to view the space")
+	ErrNoUserPerms = errors.New("User does not have permission to view users")
+	ErrNoUserFound = errors.New("User with the given username or userkey does not exist")
 )
 
 var emptyParams = EmptyParameters{}
@@ -67,14 +62,15 @@ var emptyParams = EmptyParameters{}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewAPI create new API struct
-func NewAPI(url, username, password string) (*API, error) {
-	switch {
-	case url == "":
-		return nil, ErrInitEmptyURL
-	case username == "":
-		return nil, ErrInitEmptyUser
-	case password == "":
-		return nil, ErrInitEmptyPassword
+func NewAPI(url string, auth Auth) (*API, error) {
+	if url == "" {
+		return nil, ErrEmptyURL
+	}
+
+	err := auth.Validate()
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &API{
@@ -86,35 +82,8 @@ func NewAPI(url, username, password string) (*API, error) {
 			MaxConnsPerHost:     150,
 		},
 
-		url:       url,
-		basicAuth: genBasicAuthHeader(username, password),
-	}, nil
-}
-
-// NewAPIWithToken create new API struct using Token
-// See https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html
-// Support Confluence 7.9 and later
-func NewAPIWithToken(url, token string) (*API, error) {
-	switch {
-	case url == "":
-		return nil, ErrInitEmptyURL
-	case token == "":
-		return nil, ErrInitEmptyToken
-	case len(token) != 44:
-		return nil, ErrTokenFormat
-	}
-
-	return &API{
-		Client: &fasthttp.Client{
-			Name:                getUserAgent("", ""),
-			MaxIdleConnDuration: 5 * time.Second,
-			ReadTimeout:         3 * time.Second,
-			WriteTimeout:        3 * time.Second,
-			MaxConnsPerHost:     150,
-		},
-
-		url:   url,
-		token: token,
+		url:  url,
+		auth: auth.Encode(),
 	}, nil
 }
 
@@ -1001,11 +970,9 @@ func (api *API) acquireRequest(method, uri string, params Parameters) *fasthttp.
 		req.Header.SetMethod(method)
 	}
 
-	// Set auth header
-	if api.basicAuth != "" {
-		req.Header.Add("Authorization", "Basic "+api.basicAuth)
-	} else if api.token != "" {
-		req.Header.Add("Authorization", "Bearer "+api.token)
+	// Set authorization header
+	if api.auth != "" {
+		req.Header.Add("Authorization", api.auth)
 	}
 
 	return req
@@ -1028,11 +995,6 @@ func getUserAgent(app, version string) string {
 		NAME, VERSION, runtime.Version(),
 		runtime.GOARCH, runtime.GOOS,
 	)
-}
-
-// genBasicAuthHeader generate basic auth header
-func genBasicAuthHeader(username, password string) string {
-	return base64.StdEncoding.EncodeToString([]byte(username + ":" + password))
 }
 
 // makeUnknownError create error struct for unknown error

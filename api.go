@@ -74,6 +74,8 @@ type Parameters interface {
 	Validate() error
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+
 // Date is RFC3339 encoded date
 type Date struct {
 	time.Time
