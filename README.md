@@ -19,7 +19,7 @@
 
 ### Installation
 
-Make sure you have a working Go 1.18+ workspace (_[instructions](https://golang.org/doc/install)_), then:
+Make sure you have a working Go 1.18+ workspace (_[instructions](https://go.dev/doc/install)_), then:
 
 ```bash
 go get -u github.com/essentialkaos/go-confluence/v5
