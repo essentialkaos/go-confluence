@@ -38,7 +38,7 @@ import (
 )
 
 func main() {
-  api, err := cf.NewAPI("https://confluence.domain.com", cf.AuthBasic{"john", "MySuppaPAssWOrd"})
+	api, err := cf.NewAPI(&Configuration{URL: "https://confl.domain.com", Auth: cf.AuthBasic{"john", "MySuppaPAssWOrd"}})
 
   api.SetUserAgent("MyApp", "1.2.3")
 
@@ -75,7 +75,7 @@ import (
 )
 
 func main() {
-  api, err := cf.NewAPI("https://confluence.domain.com", cf.AuthToken{"avaMTxxxqKaxpFHpmwHPXhjmUFfAJMaU3VXUji73EFhf"})
+	api, err := cf.NewAPI(&Configuration{URL: "https://confl.domain.com", Auth: cf.AuthToken{"avaMTxxxqKaxpFHpmwHPXhjmUFfAJMaU3VXUji73EFhf"}})
 
   api.SetUserAgent("MyApp", "1.2.3")
 

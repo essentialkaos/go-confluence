@@ -80,7 +80,7 @@ func (s *ConfluenceSuite) TestParamsEncoding(c *C) {
 }
 
 func (s *ConfluenceSuite) TestTinyLinkGeneration(c *C) {
-	api, _ := NewAPI("https://confl.domain.com", AuthBasic{"JohnDoe", "Test1234!"})
+	api, _ := NewAPI(&Configuration{URL: "https://confl.domain.com", Auth: AuthBasic{"JohnDoe", "Test1234!"}})
 
 	c.Assert(api.GenTinyLink("1477502"), Equals, "https://confl.domain.com/x/fosW")
 	c.Assert(api.GenTinyLink("1477627"), Equals, "https://confl.domain.com/x/_4sW")

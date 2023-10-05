@@ -42,6 +42,40 @@ type restrictionUserInfo struct {
 	User *Watcher `json:"entity"`
 }
 
+type Configuration struct {
+	// API URL for your confluence instance
+	URL string
+	// Idle keep-alive connections are closed after this duration.
+	MaxIdleConnDuration time.Duration
+	// Maximum duration for full response reading (including body).
+	ReadTimeout time.Duration
+	// Maximum duration for full request writing (including body).
+	WriteTimeout time.Duration
+	// Maximum number of connections per each host which may be established.
+	MaxConnsPerHost int
+	// ApplicationName - part of Client name. Used in User-Agent request header.
+	ApplicationName string
+	// ApplicationVersion - part of Client name. Used in User-Agent request header.
+	ApplicationVersion string
+	// Auth is interface for authorization method
+	Auth Auth
+}
+
+func (c *Configuration) setDefaults() {
+	if c.MaxIdleConnDuration <= 0 {
+		c.MaxIdleConnDuration = 5 * time.Second
+	}
+	if c.ReadTimeout <= 0 {
+		c.ReadTimeout = 3 * time.Second
+	}
+	if c.WriteTimeout <= 0 {
+		c.WriteTimeout = 3 * time.Second
+	}
+	if c.MaxConnsPerHost <= 0 {
+		c.MaxConnsPerHost = 150
+	}
+}
+
 type permission []string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -62,12 +96,12 @@ var emptyParams = EmptyParameters{}
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // NewAPI create new API struct
-func NewAPI(url string, auth Auth) (*API, error) {
-	if url == "" {
+func NewAPI(c *Configuration) (*API, error) {
+	if c.URL == "" {
 		return nil, ErrEmptyURL
 	}
 
-	err := auth.Validate()
+	err := c.Auth.Validate()
 
 	if err != nil {
 		return nil, err
@@ -75,15 +109,15 @@ func NewAPI(url string, auth Auth) (*API, error) {
 
 	return &API{
 		Client: &fasthttp.Client{
-			Name:                getUserAgent("", ""),
-			MaxIdleConnDuration: 5 * time.Second,
-			ReadTimeout:         3 * time.Second,
-			WriteTimeout:        3 * time.Second,
-			MaxConnsPerHost:     150,
+			Name:                getUserAgent(c.ApplicationName, c.ApplicationVersion),
+			MaxIdleConnDuration: c.MaxIdleConnDuration,
+			ReadTimeout:         c.ReadTimeout,
+			WriteTimeout:        c.WriteTimeout,
+			MaxConnsPerHost:     c.MaxConnsPerHost,
 		},
 
-		url:  url,
-		auth: auth.Encode(),
+		url:  c.URL,
+		auth: c.Auth.Encode(),
 	}, nil
 }
 
