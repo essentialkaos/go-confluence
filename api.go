@@ -2,7 +2,7 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -626,7 +626,7 @@ func (c *ContainerID) UnmarshalJSON(b []byte) error {
 	case len(b) == 0:
 		// nop
 	case b[0] == '"':
-		*c = ContainerID(strings.Replace(string(b), "\"", "", -1))
+		*c = ContainerID(strings.ReplaceAll(string(b), `"`, ""))
 	default:
 		*c = ContainerID(string(b))
 	}

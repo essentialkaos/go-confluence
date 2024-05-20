@@ -2,7 +2,7 @@ package confluence
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -68,10 +68,8 @@ func paramsToQuery(params interface{}) string {
 func formatString(tag string, value reflect.Value) string {
 	if value.String() != "" {
 		return tag + "=" + esc(value.String()) + "&"
-	} else {
-		if hasTagOption(tag, _OPTION_RESPECT) {
-			return getTagName(tag) + "=&"
-		}
+	} else if hasTagOption(tag, _OPTION_RESPECT) {
+		return getTagName(tag) + "=&"
 	}
 
 	return ""
@@ -81,10 +79,8 @@ func formatString(tag string, value reflect.Value) string {
 func formatInt(tag string, value reflect.Value) string {
 	if value.Int() != 0 {
 		return tag + "=" + fmt.Sprintf("%d", value.Int()) + "&"
-	} else {
-		if hasTagOption(tag, _OPTION_RESPECT) {
-			return getTagName(tag) + "=0&"
-		}
+	} else if hasTagOption(tag, _OPTION_RESPECT) {
+		return getTagName(tag) + "=0&"
 	}
 
 	return ""
@@ -99,10 +95,8 @@ func formatBool(tag string, value reflect.Value) string {
 	} else {
 		if b {
 			return getTagName(tag) + "=true&"
-		} else {
-			if hasTagOption(tag, _OPTION_RESPECT) {
-				return getTagName(tag) + "=false&"
-			}
+		} else if hasTagOption(tag, _OPTION_RESPECT) {
+			return getTagName(tag) + "=false&"
 		}
 	}
 
