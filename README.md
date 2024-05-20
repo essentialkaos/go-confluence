@@ -16,7 +16,7 @@
 `go-confluence` is a Go package for working with [Confluence REST API](https://docs.atlassian.com/ConfluenceServer/rest/7.3.3/).
 
 > [!IMPORTANT]
-> **Please note that this package only supports retrieving data from the Crowd API (_i.e. you cannot create or modify data with this package_).**
+> **Please note that this package only supports retrieving data from the Confluence API (_i.e. you cannot create or modify data with this package_).**
 
 ### Usage example
 
