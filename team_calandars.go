@@ -187,8 +187,7 @@ func (api *API) GetCalendarEvents(params CalendarEventsParameters) (*CalendarEve
 		return nil, err
 	}
 
-	switch statusCode {
-	case 403:
+	if statusCode == 403 {
 		return nil, ErrNoPerms
 	}
 
@@ -206,8 +205,7 @@ func (api *API) GetCalendars(params CalendarsParameters) (*CalendarCollection, e
 		return nil, err
 	}
 
-	switch statusCode {
-	case 403:
+	if statusCode == 403 {
 		return nil, ErrNoPerms
 	}
 

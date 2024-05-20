@@ -626,7 +626,7 @@ func (c *ContainerID) UnmarshalJSON(b []byte) error {
 	case len(b) == 0:
 		// nop
 	case b[0] == '"':
-		*c = ContainerID(strings.Replace(string(b), "\"", "", -1))
+		*c = ContainerID(strings.ReplaceAll(string(b), `"`, ""))
 	default:
 		*c = ContainerID(string(b))
 	}
