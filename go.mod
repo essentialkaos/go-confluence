@@ -1,6 +1,6 @@
 module github.com/essentialkaos/go-confluence/v6
 
-go 1.21
+go 1.22.8
 
 require (
 	github.com/essentialkaos/check v1.4.0
