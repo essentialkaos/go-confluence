@@ -28,13 +28,13 @@ const (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // paramsToQuery convert params to query string
-func paramsToQuery(params interface{}) string {
+func paramsToQuery(params any) string {
 	var result string
 
 	t := reflect.TypeOf(params)
 	v := reflect.ValueOf(params)
 
-	for i := 0; i < t.NumField(); i++ {
+	for i := range t.NumField() {
 		field := t.Field(i)
 		value := v.Field(i)
 		tag := field.Tag.Get("query")
@@ -133,7 +133,7 @@ func formatSlice(tag string, value reflect.Value) string {
 		result += name + "="
 	}
 
-	for i := 0; i < value.Len(); i++ {
+	for i := range value.Len() {
 		v := value.Index(i)
 
 		if unwrap {
