@@ -1,10 +1,10 @@
 module github.com/essentialkaos/go-confluence/v6
 
-go 1.23.6
+go 1.24.0
 
 require (
 	github.com/essentialkaos/check v1.4.1
-	github.com/valyala/fasthttp v1.65.0
+	github.com/valyala/fasthttp v1.66.0
 )
 
 require (
