@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/essentialkaos/check v1.4.1
-	github.com/valyala/fasthttp v1.66.0
+	github.com/valyala/fasthttp v1.67.0
 )
 
 require (
