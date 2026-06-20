@@ -1,10 +1,28 @@
+> [!IMPORTANT]
+> ### Project Sunset Notice 🌇
+>
+> ***This project is no longer actively maintained.***
+>
+> After careful consideration, we’ve decided to sunset development and support for this repository. While it has been a valuable effort, we are no longer able to dedicate the time and resources required to maintain it at the level we consider responsible.
+>
+> #### Forking and continuation
+>
+> If you are interested in taking over maintenance or building upon this project, you are encouraged to fork it.
+>
+> #### Thank you
+>
+> We sincerely appreciate everyone who contributed, reported issues, or used this project. Your support made it worthwhile.
+> </details>
+
+----
+
 <p align="center"><a href="#readme"><img src=".github/images/card.svg"/></a></p>
 
 <p align="center">
   <a href="https://kaos.sh/g/go-confluence.v6"><img src=".github/images/godoc.svg"/></a>
-  <a href="https://kaos.sh/r/go-confluence"><img src="https://kaos.sh/r/go-confluence.svg" alt="GoReportCard" /></a>
-  <a href="https://kaos.sh/w/go-confluence/ci"><img src="https://kaos.sh/w/go-confluence/ci.svg" alt="GitHub Actions CI Status" /></a>
-  <a href="https://kaos.sh/w/go-confluence/codeql"><img src="https://kaos.sh/w/go-confluence/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
+  <a href="https://kaos.sh/r/go-confluence"><img src="https://goreportcard.com/badge/github.com/essentialkaos/go-confluence" alt="GoReportCard" /></a>
+  <a href="https://kaos.sh/w/go-confluence/ci"><img src="https://github.com/essentialkaos/go-confluence/actions/workflows/ci.yml/badge.svg" alt="GitHub Actions CI Status" /></a>
+  <a href="https://kaos.sh/w/go-confluence/codeql"><img src="https://github.com/essentialkaos/go-confluence/actions/workflows/codeql.yml/badge.svg" alt="GitHub Actions CodeQL Status" /></a>
   <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
@@ -95,8 +113,8 @@ func main() {
 
 | Branch     | Status |
 |------------|--------|
-| `master` (_Stable_) | [![CI](https://kaos.sh/w/go-confluence/ci.svg?branch=master)](https://kaos.sh/w/go-confluence/ci?query=branch:master) |
-| `develop` (_Unstable_) | [![CI](https://kaos.sh/w/go-confluence/ci.svg?branch=develop)](https://kaos.sh/w/go-confluence/ci?query=branch:develop) |
+| `master` (_Stable_) | [![CI](https://github.com/essentialkaos/go-confluence/actions/workflows/ci.yml/badge.svg?branch=master)](https://kaos.sh/w/go-confluence/ci?query=branch:master) |
+| `develop` (_Unstable_) | [![CI](https://github.com/essentialkaos/go-confluence/actions/workflows/ci.yml/badge.svg?branch=develop)](https://kaos.sh/w/go-confluence/ci?query=branch:develop) |
 
 ### Contributing
 
